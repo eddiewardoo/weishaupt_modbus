@@ -66,16 +66,12 @@ class StatusItem:
         self._translation_key = val
 
 
-class ModbusItem:
-    """class Modbus item, consisting of address, name,
-    format (temperature, status, ..),
-    type (sensor, number, ..),
-    device (System, Heatpump, ..) and
-    optional result list from status items
-    (number entities: status = limits?
+class ApiItem:
+    """Class ApiIem item.
+
+    This can either be a ModbusItem or a WebifItem
     """
 
-    _address = None
     _name = "empty"
     _format = None
     _type = TYPES.SENSOR
@@ -87,7 +83,6 @@ class ModbusItem:
 
     def __init__(
         self,
-        address: int,
         name: str,
         mformat: FormatConstants,
         mtype: TypeConstants,
@@ -96,11 +91,10 @@ class ModbusItem:
         resultlist=None,
     ) -> None:
         """Initialise ModbusItem."""
-        self._address = address
-        self._name = name
-        self._format = mformat
-        self._type = mtype
-        self._device = device
+        self._name: str = name
+        self._format: FormatConstants = mformat
+        self._type: TypeConstants = mtype
+        self._device: DeviceConstants = device
         self._resultlist = resultlist
         self._state = None
         self._is_invalid = False
@@ -114,16 +108,6 @@ class ModbusItem:
     @is_invalid.setter
     def is_invalid(self, val: bool):
         self._is_invalid = val
-
-    @property
-    def address(self) -> int:
-        """Return address."""
-        return self._address
-
-    @address.setter
-    def address(self, val: int):
-        """Return address."""
-        self._address = val
 
     @property
     def state(self):
@@ -215,3 +199,73 @@ class ModbusItem:
             if val == item.translation_key:
                 return item.number
         return -1
+
+
+class WebItem(ApiItem):
+    _webif_group = None
+
+    def __init__(
+        self,
+        name: str,
+        mformat: FormatConstants,
+        mtype: TypeConstants,
+        device: DeviceConstants,
+        webif_group: str,
+        translation_key: str = None,
+        resultlist=None,
+    ) -> None:
+        ApiItem.__init__(
+            self=self,
+            name=name,
+            mformat=mformat,
+            mtype=mtype,
+            device=device,
+            translation_key=translation_key,
+            resultlist=resultlist,
+        )
+        _webif_group: str = webif_group
+
+    @property
+    def webif_group(self) -> str:
+        """Return webif_group."""
+        return self.webif_group
+
+    @webif_group.setter
+    def webif_group(self, val: str) -> None:
+        """Set webif_group."""
+        self._webif_group: str = val
+
+
+class ModbusItem(ApiItem):
+    _address = None
+
+    def __init__(
+        self,
+        address: int,
+        name: str,
+        mformat: FormatConstants,
+        mtype: TypeConstants,
+        device: DeviceConstants,
+        translation_key: str,
+        resultlist=None,
+    ) -> None:
+        ApiItem.__init__(
+            self=self,
+            name=name,
+            mformat=mformat,
+            mtype=mtype,
+            device=device,
+            translation_key=translation_key,
+            resultlist=resultlist,
+        )
+        self._address: str = address
+
+    @property
+    def address(self) -> int:
+        """Return address."""
+        return self._address
+
+    @address.setter
+    def address(self, val: int):
+        """Return address."""
+        self._address = val

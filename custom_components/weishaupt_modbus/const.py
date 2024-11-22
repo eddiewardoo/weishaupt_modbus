@@ -100,5 +100,7 @@ class DeviceConstants:
     UK = "Unknown"
     IO = "Eingänge/Ausgänge"
 
+    WIH = "Webif Info Heizkreis"
+
 
 DEVICES = DeviceConstants()

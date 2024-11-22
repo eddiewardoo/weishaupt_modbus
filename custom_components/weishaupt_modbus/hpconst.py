@@ -6,7 +6,7 @@ from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import UnitOfTime
 
 from .const import FORMATS, TYPES, DEVICES
-from .items import ModbusItem, StatusItem
+from .items import ModbusItem, StatusItem, WebItem
 
 reverse_device_list: dict[str, str] = {
     "dev_system": "SYS",
@@ -973,6 +973,16 @@ MODBUS_IO_ITEMS: list[ModbusItem] = [
     ModbusItem( address=45108, name="Konf. Eingang DE2", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.IO, resultlist=IO_KONFIG_IN, translation_key="konf_eing_de2"),
 ] # noqa: E501
 
+
+WEBIF_INFO_HEIZKREIS1: list[WebItem] = [
+    WebItem(name="Außentemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_aussentemperatur"),
+    WebItem(name="AT Mittelwert", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_at_mittelwert"),
+    WebItem(name="AT Langzeitwert", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_at_langzeitwert"),
+    WebItem(name="Raumsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_raumsolltemperatur"),
+    WebItem(name="Vorlaufsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_vorlaufsolltemperatur"),
+    WebItem(name="Vorlauftemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_vorlauftemperatur"),
+
+]
 DEVICELISTS: list = [
     MODBUS_SYS_ITEMS,
     MODBUS_WP_ITEMS,
