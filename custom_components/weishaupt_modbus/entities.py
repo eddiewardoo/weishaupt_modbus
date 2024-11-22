@@ -257,7 +257,9 @@ class MyEntity(Entity):
             case FORMATS.PERCENTAGE:
                 return self.calc_percentage(val)
             case FORMATS.STATUS:
-                return self._modbus_item.get_text_from_number(val) #translation_key_from_number(val)
+                return self._modbus_item.get_text_from_number(
+                    val
+                )  # translation_key_from_number(val)
             case FORMATS.UNKNOWN:
                 return int(val)
             case _:
@@ -269,7 +271,9 @@ class MyEntity(Entity):
         match self._modbus_item.format:
             # logically, this belongs to the ModbusItem, but doing it here
             case FORMATS.STATUS:
-                val = self._modbus_item.get_number_from_text(val) #translation_key(value)
+                val = self._modbus_item.get_number_from_text(
+                    val
+                )  # translation_key(value)
             case _:
                 val = value * self._divider
         return val
@@ -468,7 +472,7 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         # option list build from the status list of the ModbusItem
         self.options = []
         for _useless, item in enumerate(self._modbus_item._resultlist):
-            self.options.append(item.text) #translation_key)
+            self.options.append(item.text)  # translation_key)
 
     async def async_select_option(self, option: str) -> None:
         # the synching is done by the ModbusObject of the entity
@@ -487,3 +491,40 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
     def device_info(self) -> DeviceInfo:
         """Return device info."""
         return MyEntity.my_device_info(self)
+
+
+class MyWebifEntity(CoordinatorEntity, SensorEntity):
+    """An entity using CoordinatorEntity.
+
+    The CoordinatorEntity class provides:
+      should_poll
+      async_update
+      async_added_to_hass
+      available
+
+    """
+
+    _attr_name = "Webif Sensor"
+
+    def __init__(self, coordinator, idx):
+        """Pass coordinator to CoordinatorEntity."""
+        super().__init__(coordinator, context=idx)
+        self.idx = idx
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        # print(self.coordinator.data["Webifsensor"])
+        self._attr_native_value = self.coordinator.data["Webifsensor"]
+        self.async_write_ha_state()
+
+    async def async_turn_on(self, **kwargs):
+        """Turn the light on.
+
+        Example method how to request data updates.
+        """
+        # Do the turning on.
+        # ...
+
+        # Update the data
+        await self.coordinator.async_request_refresh()

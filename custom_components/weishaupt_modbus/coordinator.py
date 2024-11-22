@@ -1,28 +1,28 @@
 """The Update Coordinator for the ModbusItems."""
 
-import logging
 import asyncio
+from datetime import timedelta
+import logging
 import warnings
 
+import async_timeout
 from pymodbus import ModbusException
 
+from homeassistant.components.light import LightEntity
+from homeassistant.core import callback
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
     DataUpdateCoordinator,
+    UpdateFailed,
 )
 
-from .const import (
-    CONST,
-    FORMATS,
-    TYPES,
-    CONF_HK2,
-    CONF_HK3,
-    CONF_HK4,
-    CONF_HK5,
-)
+from .configentry import MyConfigEntry
+from .const import CONF_HK2, CONF_HK3, CONF_HK4, CONF_HK5, CONST, FORMATS, TYPES
 from .hpconst import DEVICES, TEMPRANGE_STD
 from .items import ModbusItem
-from .modbusobject import ModbusObject, ModbusAPI
-from .configentry import MyConfigEntry
+from .modbusobject import ModbusAPI, ModbusObject
+from .webif_object import WebifConnection
 
 logging.basicConfig()
 _LOGGER = logging.getLogger(__name__)
@@ -177,3 +177,60 @@ class MyCoordinator(DataUpdateCoordinator):
                 return await self.fetch_data(listening_idx)
             except ModbusException:
                 warnings.warn("connection to the heatpump failed")
+
+
+class MyWebIfCoordinator(DataUpdateCoordinator):
+    """My custom coordinator."""
+
+    def __init__(self, hass):
+        """Initialize my coordinator."""
+        super().__init__(
+            hass,
+            _LOGGER,
+            # Name of the data. For logging purposes.
+            name="My sensor",
+            # Polling interval. Will only be polled if there are subscribers.
+            update_interval=timedelta(seconds=30),
+            # Set always_update to `False` if the data returned from the
+            # api can be compared via `__eq__` to avoid duplicate updates
+            # being dispatched to listeners
+            always_update=True,
+        )
+        self.my_api = WebifConnection()
+        # self._device: MyDevice | None = None
+
+    async def _async_setup(self):
+        """Set up the coordinator.
+
+        This is the place to set up your coordinator,
+        or to load data, that only needs to be loaded once.
+
+        This method will be called automatically during
+        coordinator.async_config_entry_first_refresh.
+        """
+        # self._device = await self.my_api.get_device()
+
+    async def _async_update_data(self):
+        """Fetch data from API endpoint.
+
+        This is the place to pre-process the data to lookup tables
+        so entities can quickly look up their data.
+        """
+        try:
+            # Note: asyncio.TimeoutError and aiohttp.ClientError are already
+            # handled by the data update coordinator.
+            async with async_timeout.timeout(10):
+                # Grab active context variables to limit data required to be fetched from API
+                # Note: using context is not required if there is no need or ability to limit
+                # data retrieved from API.
+                # listening_idx = set(self.async_contexts())
+                return await self.my_api.return_test_data()
+
+        except:
+            print("fetch data failed")
+        # except ApiAuthError as err:
+        # Raising ConfigEntryAuthFailed will cancel future updates
+        # and start a config flow with SOURCE_REAUTH (async_step_reauth)
+        #    raise ConfigEntryAuthFailed from err
+        # except ApiError as err:
+        #    raise UpdateFailed(f"Error communicating with API: {err}")

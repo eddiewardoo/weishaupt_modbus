@@ -9,8 +9,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import TYPES
 from .hpconst import DEVICELISTS
-from .entities import build_entity_list
-from .coordinator import MyCoordinator
+from .entities import build_entity_list, MyWebifEntity
+from .coordinator import MyCoordinator, MyWebIfCoordinator
 from .configentry import MyConfigEntry
 
 logging.basicConfig()
@@ -43,6 +43,9 @@ async def async_setup_entry(
             entries, config_entry, device, TYPES.SENSOR, coordinator
         )
 
+    webifcoordinator = MyWebIfCoordinator(hass)
+    webifentitiys = [MyWebifEntity(webifcoordinator, 1)]
+    entries = entries + webifentitiys
     async_add_entities(
         entries,
         update_before_add=True,

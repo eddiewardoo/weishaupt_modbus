@@ -24,6 +24,7 @@ from .hpconst import DEVICELISTS
 from .items import ModbusItem, StatusItem
 from .modbusobject import ModbusAPI
 from .configentry import MyConfigEntry, MyData
+from .webif_object import WebifConnection
 
 PLATFORMS: list[str] = [
     "number",
@@ -43,6 +44,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     mbapi = ModbusAPI(entry)
     await mbapi.connect()
     entry.runtime_data = MyData(mbapi, hass.config.config_dir, hass)
+
+    # myWebifCon = WebifConnection()
+    # data = await myWebifCon.return_test_data()
+    # print(data)
+    # print(myWebifCon._session.closed)
+    # await myWebifCon.login()
+    # print(myWebifCon._session.closed)
+    # data = await myWebifCon.get_info()
+    # await myWebifCon.close()
+    # print(myWebifCon._session.closed)
 
     # This is used to generate a strings.json file from hpconst.py
     # create_string_json()
