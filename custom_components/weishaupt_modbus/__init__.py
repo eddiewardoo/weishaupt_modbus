@@ -7,6 +7,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PREFIX
 from homeassistant.core import HomeAssistant
 
+from .configentry import MyConfigEntry, MyData
 from .const import (
     CONF_DEVICE_POSTFIX,
     CONF_HK2,
@@ -23,8 +24,6 @@ from .const import (
 from .hpconst import DEVICELISTS
 from .items import ModbusItem, StatusItem
 from .modbusobject import ModbusAPI
-from .configentry import MyConfigEntry, MyData
-from .webif_object import WebifConnection
 
 PLATFORMS: list[str] = [
     "number",

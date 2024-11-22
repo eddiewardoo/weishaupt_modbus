@@ -1,6 +1,6 @@
 """Item classes."""
 
-from .const import TYPES, FormatConstants, TypeConstants, DeviceConstants
+from .const import TYPES, DeviceConstants, FormatConstants, TypeConstants
 
 
 # An item of a status, e.g. error code and error text along with a precise description
@@ -18,8 +18,8 @@ class StatusItem:
         self,
         number: int,
         text: str,
-        translation_key: str = None,
-        description: str = None,
+        translation_key: str | None = None,
+        description: str | None = None,
     ) -> None:
         """Initialise StatusItem."""
         self._number = number
@@ -87,7 +87,7 @@ class ApiItem:
         mformat: FormatConstants,
         mtype: TypeConstants,
         device: DeviceConstants,
-        translation_key: str = None,
+        translation_key: str | None = None,
         resultlist=None,
     ) -> None:
         """Initialise ModbusItem."""
@@ -202,6 +202,11 @@ class ApiItem:
 
 
 class WebItem(ApiItem):
+    """Represents an ApiItem.
+
+    Used for generating entitys.
+    """
+
     _webif_group = None
 
     def __init__(
@@ -211,9 +216,21 @@ class WebItem(ApiItem):
         mtype: TypeConstants,
         device: DeviceConstants,
         webif_group: str,
-        translation_key: str = None,
+        translation_key: str | None = None,
         resultlist=None,
     ) -> None:
+        """WebifItem is used to generate sensors for an Webinterface value.
+
+        Args:
+            name (str): Name of the entity
+            mformat (FormatConstants): Format of the entity
+            mtype (TypeConstants): Type of the entity
+            device (DeviceConstants): Device the entity belongs to
+            webif_group (str): Group of entitys this one should be fetched with.
+            translation_key (str, optional): Translation Key of the entity
+            resultlist (_type_, optional): Resultlist of the entity
+
+        """
         ApiItem.__init__(
             self=self,
             name=name,
@@ -237,6 +254,8 @@ class WebItem(ApiItem):
 
 
 class ModbusItem(ApiItem):
+    """Represents an Modbus item."""
+
     _address = None
 
     def __init__(
@@ -249,6 +268,18 @@ class ModbusItem(ApiItem):
         translation_key: str,
         resultlist=None,
     ) -> None:
+        """ModbusItem is used to generate entitys.
+
+        Args:
+            address (int): Modbus Address of the item.
+            name (str): Name of the entity.
+            mformat (FormatConstants): Format of the entity
+            mtype (TypeConstants): Type of the entity.
+            device (DeviceConstants): Device the entity belongs to
+            translation_key (str): Translation key of the entity
+            resultlist (_type_, optional): Resultlist of the entity_. Defaults to None.
+
+        """
         ApiItem.__init__(
             self=self,
             name=name,
@@ -267,5 +298,5 @@ class ModbusItem(ApiItem):
 
     @address.setter
     def address(self, val: int):
-        """Return address."""
+        """Set address."""
         self._address = val

@@ -5,7 +5,7 @@ import copy
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import UnitOfTime
 
-from .const import FORMATS, TYPES, DEVICES
+from .const import DEVICES, FORMATS, TYPES
 from .items import ModbusItem, StatusItem, WebItem
 
 reverse_device_list: dict[str, str] = {
@@ -382,13 +382,14 @@ WW_PUSH: list[StatusItem] = [
 ]
 # Fill WW_PUSH with values for every 5 Minutes
 for i in range(5, 240, 5):
-    WW_PUSH.append(
+    WW_PUSH.append(  # noqa: PERF401
         StatusItem(
             number=i,
             text=str(object=i) + " " + UnitOfTime.MINUTES,
             translation_key="ww_push_" + str(object=i),
         ),
-    )  # noqa: PERF401
+    )
+
 
 W2_STATUS: list[StatusItem] = [
     StatusItem(number=0, text="aus", translation_key="w2_status_aus"),
@@ -768,12 +769,12 @@ RANGE_ENERGY: list[StatusItem] = [
     StatusItem(number=1, text="divider"),
 ]
 
-RANGE_CALCPOWER = [
-    StatusItem(-1, SensorDeviceClass.POWER),
-    StatusItem(1, "divider"),
-    StatusItem(30002, "x"),
-    StatusItem(33104, "y"),
-    StatusItem(30001, "x2"),
+RANGE_CALCPOWER: list[StatusItem] = [
+    StatusItem(number=-1, text=SensorDeviceClass.POWER),
+    StatusItem(number=1, text="divider"),
+    StatusItem(number=30002, text="x"),
+    StatusItem(number=33104, text="y"),
+    StatusItem(number=30001, text="x2"),
 ]
 
 RANGES: list[list[StatusItem]] = [
@@ -805,7 +806,7 @@ MODBUS_SYS_ITEMS: list[ModbusItem] = [
     ModbusItem( address=30005, name="Fehlerfrei", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_FEHLERFREI, translation_key="fehlerfrei"),
     ModbusItem( address=30006, name="Betriebsanzeige", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_BETRIEBSANZEIGE, translation_key="betriebsanzeige"),
     ModbusItem( address=40001,  name="Systembetriebsart", mformat=FORMATS.STATUS, mtype=TYPES.SELECT, device=DEVICES.SYS, resultlist=SYS_BETRIEBSART, translation_key="systembetriebsart"),
-] # noqa: E501
+]
 
 MODBUS_WP_ITEMS: list[ModbusItem] = [
     ModbusItem( address=33101, name="Betrieb", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.WP, resultlist=HP_BETRIEB, translation_key="wp_betrieb"),
@@ -831,7 +832,7 @@ MODBUS_WP_ITEMS: list[ModbusItem] = [
     ModbusItem( address=43108, name="Sollwert Volumenstrom Heizen", mformat=FORMATS.VOLUMENSTROM, mtype=TYPES.NUMBER_RO, device=DEVICES.WP, resultlist=RANGE_FLOWRATE, translation_key="soll_volumenstrom_heizen"),
     ModbusItem( address=43109, name="Sollwert Volumenstrom Kühlen", mformat=FORMATS.VOLUMENSTROM, mtype=TYPES.NUMBER_RO,  device=DEVICES.WP, resultlist=RANGE_FLOWRATE, translation_key="soll_volumenstrom_kuehlen"),
     ModbusItem( address=43110, name="Sollwert Volumenstrom Warmwasser", mformat=FORMATS.VOLUMENSTROM, mtype=TYPES.NUMBER_RO, device=DEVICES.WP, resultlist=RANGE_FLOWRATE, translation_key="soll_volumenstrom_ww"),
-] # noqa: E501
+]
 
 MODBUS_HZ_ITEMS = [
     ModbusItem( address=31101, name="Raumsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.HZ, resultlist=TEMPRANGE_ROOM, translation_key="raum_soll_temp"),
@@ -852,11 +853,11 @@ MODBUS_HZ_ITEMS = [
     ModbusItem( address=41110, name="Heizen Konstanttemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER_RO, device=DEVICES.HZ, resultlist=TEMPRANGE_ROOM, translation_key="heiz_konstanttemp"),
     ModbusItem( address=41111, name="Heizen Konstanttemp Absenk", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER_RO, device=DEVICES.HZ, resultlist=TEMPRANGE_ROOM, translation_key="heiz_konstanttemp_absenk"),
     ModbusItem( address=41112, name="Kühlen Konstanttemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER_RO, device=DEVICES.HZ, resultlist=TEMPRANGE_ROOM, translation_key="kuehl_konstanttemp"),
-] # noqa: E501
+]
 
 # buils other Heizkreis Itemlists
 MODBUS_HZ2_ITEMS: list = []
-for index, item in enumerate(iterable=MODBUS_HZ_ITEMS):
+for item in MODBUS_HZ_ITEMS:
     mbi = copy.deepcopy(x=item)
     mbi.address = item.address+100
     mbi.name = item.name + "2"
@@ -866,7 +867,7 @@ for index, item in enumerate(iterable=MODBUS_HZ_ITEMS):
 
 # buils other Heizkreis Itemlists
 MODBUS_HZ3_ITEMS: list = []
-for index, item in enumerate(iterable=MODBUS_HZ_ITEMS):
+for item in MODBUS_HZ_ITEMS:
     mbi = copy.deepcopy(x=item)
     mbi.address = item.address+200
     mbi.name = item.name + "3"
@@ -876,7 +877,7 @@ for index, item in enumerate(iterable=MODBUS_HZ_ITEMS):
 
 # buils other Heizkreis Itemlists
 MODBUS_HZ4_ITEMS: list = []
-for index, item in enumerate(iterable=MODBUS_HZ_ITEMS):
+for item in MODBUS_HZ_ITEMS:
     mbi = copy.deepcopy(x=item)
     mbi.address = item.address+300
     mbi.name = item.name + "4"
@@ -886,7 +887,7 @@ for index, item in enumerate(iterable=MODBUS_HZ_ITEMS):
 
 # buils other Heizkreis Itemlists
 MODBUS_HZ5_ITEMS: list = []
-for index, item in enumerate(iterable=MODBUS_HZ_ITEMS):
+for item in MODBUS_HZ_ITEMS:
     mbi: ModbusItem = copy.deepcopy(x=item)
     mbi.address = item.address+400
     mbi.name = item.name + "5"
@@ -902,7 +903,7 @@ MODBUS_WW_ITEMS: list[ModbusItem] = [
     ModbusItem( address=42103, name="Warmwasser Normal", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.WW, resultlist=TEMPRANGE_WATER, translation_key="ww_normal"),
     ModbusItem( address=42104, name="Warmwasser Absenk", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.WW, resultlist=TEMPRANGE_WATER, translation_key="ww_absenk"),
     ModbusItem( address=42105, name="SG Ready Anhebung", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.WW, resultlist=TEMPRANGE_SGREADY, translation_key="sgr_anhebung"),
-] # noqa: E501
+]
 
 MODBUS_W2_ITEMS: list[ModbusItem] = [
     ModbusItem( address=34101, name="Status 2. WEZ", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.W2, resultlist=W2_STATUS, translation_key="status_2_wez"),
@@ -918,7 +919,7 @@ MODBUS_W2_ITEMS: list[ModbusItem] = [
     ModbusItem( address=44104, name="Grenztemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.W2, resultlist=TEMPRANGE_BIVALENZ, translation_key="grenztemp"),
     ModbusItem( address=44105, name="Bivalenztemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.W2, resultlist=TEMPRANGE_BIVALENZ, translation_key="bivalenztemp"),
     ModbusItem( address=44106, name="Bivalenztemperatur WW", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.W2, resultlist=TEMPRANGE_BIVALENZ, translation_key="bivalenztemp_ww"),
-] # noqa: E501
+]
 
 MODBUS_ST_ITEMS: list[ModbusItem] = [
     ModbusItem( address=36101, name="Gesamt Energie heute", mformat=FORMATS.ENERGY, mtype=TYPES.SENSOR, device=DEVICES.ST, resultlist=RANGE_ENERGY, translation_key="ges_energie_heute"),
@@ -950,7 +951,7 @@ MODBUS_ST_ITEMS: list[ModbusItem] = [
     ModbusItem( address=36703, name="Elektr. Energie Monat", mformat=FORMATS.ENERGY, mtype=TYPES.SENSOR, device=DEVICES.ST, resultlist=RANGE_ENERGY, translation_key="el_energie_monat"),
     ModbusItem( address=36704, name="Elektr. Energie Jahr", mformat=FORMATS.ENERGY, mtype=TYPES.SENSOR, device=DEVICES.ST, resultlist=RANGE_ENERGY, translation_key="el_energie_jahr"),
     ModbusItem( address=36801, name="Adr. 36801", mformat=FORMATS.UNKNOWN, mtype=TYPES.SENSOR, device=DEVICES.ST, translation_key="adr36801"),
-] # noqa: E501
+]
 
 
 MODBUS_IO_ITEMS: list[ModbusItem] = [
@@ -971,7 +972,7 @@ MODBUS_IO_ITEMS: list[ModbusItem] = [
     ModbusItem( address=45106, name="Konf. Ausgang  H1.5", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.IO, resultlist=IO_KONFIG, translation_key="konf_ausg_h15"),
     ModbusItem( address=45107, name="Konf. Eingang DE1", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.IO, resultlist=IO_KONFIG_IN, translation_key="konf_eing_de1"),
     ModbusItem( address=45108, name="Konf. Eingang DE2", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.IO, resultlist=IO_KONFIG_IN, translation_key="konf_eing_de2"),
-] # noqa: E501
+]
 
 
 WEBIF_INFO_HEIZKREIS1: list[WebItem] = [

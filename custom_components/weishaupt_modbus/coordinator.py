@@ -5,11 +5,9 @@ from datetime import timedelta
 import logging
 import warnings
 
-import async_timeout
 from pymodbus import ModbusException
 
-from homeassistant.components.light import LightEntity
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -34,11 +32,11 @@ class MyCoordinator(DataUpdateCoordinator):
 
     def __init__(
         self,
-        hass,
+        hass: HomeAssistant,
         my_api: ModbusAPI,
         modbusitems: ModbusItem,
         p_config_entry: MyConfigEntry,
-    ):
+    ) -> None:
         """Initialize my coordinator."""
         super().__init__(
             hass,
@@ -74,7 +72,7 @@ class MyCoordinator(DataUpdateCoordinator):
         return await mbo.value
 
     async def check_configured(self, modbus_item: ModbusItem) -> bool:
-        """function checks if item is configured"""
+        """Check if item is configured."""
         if self._config_entry.data[CONF_HK2] is False:
             if modbus_item.device is DEVICES.HZ2:
                 return False
@@ -176,17 +174,17 @@ class MyCoordinator(DataUpdateCoordinator):
                 listening_idx = set(self.async_contexts())
                 return await self.fetch_data(listening_idx)
             except ModbusException:
-                warnings.warn("connection to the heatpump failed")
+                warnings.warn(message="connection to the heatpump failed")
 
 
 class MyWebIfCoordinator(DataUpdateCoordinator):
     """My custom coordinator."""
 
-    def __init__(self, hass):
+    def __init__(self, hass: HomeAssistant) -> None:
         """Initialize my coordinator."""
         super().__init__(
-            hass,
-            _LOGGER,
+            hass=hass,
+            logger=_LOGGER,
             # Name of the data. For logging purposes.
             name="My sensor",
             # Polling interval. Will only be polled if there are subscribers.
@@ -219,7 +217,7 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
         try:
             # Note: asyncio.TimeoutError and aiohttp.ClientError are already
             # handled by the data update coordinator.
-            async with async_timeout.timeout(10):
+            async with asyncio.timeout(10):
                 # Grab active context variables to limit data required to be fetched from API
                 # Note: using context is not required if there is no need or ability to limit
                 # data retrieved from API.
