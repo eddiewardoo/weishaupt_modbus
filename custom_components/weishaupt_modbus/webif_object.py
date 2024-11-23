@@ -10,8 +10,10 @@ import aiohttp
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, ResultSet, Tag
 
-from homeassistant.config_entries import ConfigEntry
+
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME  # noqa: F401
+
+from .configentry import MyConfigEntry
 
 logging.basicConfig()
 log: logging.Logger = logging.getLogger(name=__name__)
@@ -20,7 +22,7 @@ log: logging.Logger = logging.getLogger(name=__name__)
 class WebifConnection:
     """Connect to the local Weishaupt Webif."""
 
-    _config_entry: ConfigEntry = None
+    _config_entry: MyConfigEntry = None
     _ip: str = ""
     _username: str = ""
     _password: str = ""
@@ -31,17 +33,17 @@ class WebifConnection:
     _connected: bool = False
     _values = {}
 
-    def __init__(self, entry: ConfigEntry) -> None:
+    def __init__(self, config_entry: MyConfigEntry) -> None:
         """Initialize the WebIf connection.
 
         Todo: Get info from config.
 
         """
-        self._ip = entry.data[CONF_HOST]
-        self._username = entry.data[CONF_USERNAME]
-        self._password = entry.data[CONF_PASSWORD]
+        self._ip = config_entry.data[CONF_HOST]
+        self._username = config_entry.data[CONF_USERNAME]
+        self._password = config_entry.data[CONF_PASSWORD]
         self._base_url = "http://" + self._ip
-        self._config_entry = entry
+        self._config_entry = config_entry
 
     async def login(self) -> None:
         """Log into the portal. Create cookie to stay logged in for the session."""

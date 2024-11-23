@@ -62,7 +62,7 @@ async def async_setup_entry(
             coordinator=coordinator,
         )
 
-    webifcoordinator = MyWebIfCoordinator(hass=hass)
+    webifcoordinator = MyWebIfCoordinator(hass=hass, config_entry=config_entry)
 
     webifentries = []
 

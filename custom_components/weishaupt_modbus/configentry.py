@@ -13,6 +13,7 @@ class MyData:
     """My config data."""
 
     modbus_api: any
+    webif_api: any
     config_dir: str
     hass: HomeAssistant
 

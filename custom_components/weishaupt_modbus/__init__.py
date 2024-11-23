@@ -5,7 +5,7 @@ from pathlib import Path
 import warnings
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PREFIX, CONF_USERNAME, CONF_PASSWORD
+from homeassistant.const import CONF_PASSWORD, CONF_PREFIX, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 
 from .configentry import MyConfigEntry, MyData
@@ -25,6 +25,7 @@ from .const import (
 from .hpconst import DEVICELISTS
 from .items import ModbusItem, StatusItem
 from .modbusobject import ModbusAPI
+from .webif_object import WebifConnection
 
 PLATFORMS: list[str] = [
     "number",
@@ -41,9 +42,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
     # hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hub.Hub(hass, entry.data["host"])
-    mbapi = ModbusAPI(entry)
+    mbapi = ModbusAPI(config_entry=entry)
+    webapi = WebifConnection(config_entry=entry)
     await mbapi.connect()
-    entry.runtime_data = MyData(mbapi, hass.config.config_dir, hass)
+    entry.runtime_data = MyData(
+        modbus_api=mbapi, webif_api=webapi, config_dir=hass.config.config_dir, hass=hass
+    )
 
     # myWebifCon = WebifConnection()
     # data = await myWebifCon.return_test_data()

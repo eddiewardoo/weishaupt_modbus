@@ -180,7 +180,7 @@ class MyCoordinator(DataUpdateCoordinator):
 class MyWebIfCoordinator(DataUpdateCoordinator):
     """My custom coordinator."""
 
-    def __init__(self, hass: HomeAssistant) -> None:
+    def __init__(self, hass: HomeAssistant, config_entry: MyConfigEntry) -> None:
         """Initialize my coordinator."""
         super().__init__(
             hass=hass,
@@ -194,7 +194,7 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
             # being dispatched to listeners
             always_update=True,
         )
-        self.my_api = WebifConnection(entry=MyConfigEntry)
+        self.my_api = config_entry.runtime_data.webif_api
         # self._device: MyDevice | None = None
 
     async def _async_setup(self):
