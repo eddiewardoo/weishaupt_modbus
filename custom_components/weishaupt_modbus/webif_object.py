@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString, ResultSet, Tag
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST  # noqa: F401
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME  # noqa: F401
 
 logging.basicConfig()
 log: logging.Logger = logging.getLogger(name=__name__)
@@ -37,21 +37,20 @@ class WebifConnection:
         Todo: Get info from config.
 
         """
-        # self._ip = entry.data[CONF_HOST]
-        self._ip = "10.10.1.225"
-        self._username = "Mad_One"
-        self._password = "5315herb"
+        self._ip = entry.data[CONF_HOST]
+        self._username = entry.data[CONF_USERNAME]
+        self._password = entry.data[CONF_PASSWORD]
         self._base_url = "http://" + self._ip
         self._config_entry = entry
 
     async def login(self) -> None:
         """Log into the portal. Create cookie to stay logged in for the session."""
         jar = aiohttp.CookieJar(unsafe=True)
-        self._session = aiohttp.ClientSession(cookie_jar=jar)
+        self._session = aiohttp.ClientSession(base_url=self._base_url, cookie_jar=jar)
 
         async with self._session.post(
-            "http://10.10.1.225/login.html",
-            data={"user": "Mad_One", "pass": "5315herb"},
+            "login.html",
+            data={"user": self._username, "pass": self._password},
         ) as response:
             if response.status == 200:
                 self._connected = True
@@ -63,16 +62,15 @@ class WebifConnection:
     async def return_test_data(self) -> dict[str, str]:
         """Return some values for testing."""
 
-        myreturn = {
+        return {
             "Webifsensor": "TESTWERT",
             "Außentemperatur": 2,
             "AT Mittelwert": -1,
-            "AT Langzeitwert": -20,
-            "Raumsolltemperatur": 22,
-            "Vorlaufsolltemperatur": 25,
-            "Vorlauftemperatur": 24,
+            "AT Langzeitwert": -1,
+            "Raumsolltemperatur": 22.0,
+            "Vorlaufsolltemperatur": 32.5,
+            "Vorlauftemperatur": 32.4,
         }
-        return myreturn
 
     async def close(self) -> None:
         """Close connection to WebIf."""

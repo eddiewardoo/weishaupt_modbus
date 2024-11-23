@@ -6,7 +6,13 @@ from aiofiles.os import scandir
 import voluptuous as vol
 
 from homeassistant import config_entries, exceptions
-from homeassistant.const import CONF_HOST, CONF_PORT, CONF_PREFIX
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_PORT,
+    CONF_PREFIX,
+    CONF_PASSWORD,
+    CONF_USERNAME,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
@@ -118,6 +124,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                 vol.Optional(schema=CONF_HK5, default=False): bool,
                 vol.Optional(schema=CONF_NAME_DEVICE_PREFIX, default=False): bool,
                 vol.Optional(schema=CONF_NAME_TOPIC_PREFIX, default=False): bool,
+                vol.Optional(schema=CONF_USERNAME, default=""): str,
+                vol.Optional(schema=CONF_PASSWORD, default=""): str,
             }
         )
 
@@ -192,6 +200,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                     schema=CONF_NAME_TOPIC_PREFIX,
                     default=reconfigure_entry.data[CONF_NAME_TOPIC_PREFIX],
                 ): bool,
+                vol.Optional(
+                    schema=CONF_USERNAME, default=reconfigure_entry.data[CONF_USERNAME]
+                ): str,
+                vol.Optional(
+                    schema=CONF_PASSWORD, default=reconfigure_entry.data[CONF_PASSWORD]
+                ): str,
             }
         )
 

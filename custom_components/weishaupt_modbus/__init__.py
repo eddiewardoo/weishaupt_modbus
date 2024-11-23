@@ -5,7 +5,7 @@ from pathlib import Path
 import warnings
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PREFIX
+from homeassistant.const import CONF_PREFIX, CONF_USERNAME, CONF_PASSWORD
 from homeassistant.core import HomeAssistant
 
 from .configentry import MyConfigEntry, MyData
@@ -93,8 +93,11 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: MyConfigEntry):
         new_data[CONF_NAME_DEVICE_PREFIX] = False
         new_data[CONF_NAME_TOPIC_PREFIX] = False
 
+    if config_entry.version < 5:
+        new_data[CONF_USERNAME] = ""
+        new_data[CONF_PASSWORD] = ""
         hass.config_entries.async_update_entry(
-            config_entry, data=new_data, minor_version=1, version=4
+            config_entry, data=new_data, minor_version=1, version=5
         )
         warnings.warn("Config entries updated to version 4")
 
