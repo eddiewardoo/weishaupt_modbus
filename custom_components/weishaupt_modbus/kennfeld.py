@@ -155,15 +155,11 @@ class PowerMap:
     def map(self, x, y):
         """Map."""
         x = x - self.known_x[0]
-        if x < 0:
-            x = 0
-        if x > 70:
-            x = 70
+        x = max(x, 0)
+        x = min(x, 70)
         y = y - self.known_t[0]
-        if y < 0:
-            y = 0
-        if y > (self._steps - 1):
-            y = self._steps - 1
+        y = max(y, 0)
+        y = min(y, self._steps - 1)
 
         return self._max_power[int(y)][int(x)]
 

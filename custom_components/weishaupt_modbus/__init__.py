@@ -1,6 +1,7 @@
 """init."""
 
 import json
+from pathlib import Path
 import warnings
 
 from homeassistant.config_entries import ConfigEntry
@@ -173,7 +174,7 @@ def create_string_json() -> None:
     #    ...
 
     # load strings.json into string
-    with open(
+    with Path.open(
         file="config/custom_components/weishaupt_modbus/strings.json",
         encoding="utf-8",
     ) as file:
@@ -183,7 +184,7 @@ def create_string_json() -> None:
     # overwrite entiy dict
     data_dict["entity"] = myEntity
     # write whole json to file again
-    with open(
+    with Path.open(
         file="config/custom_components/weishaupt_modbus/strings.json",
         mode="w",
         encoding="utf-8",

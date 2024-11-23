@@ -224,8 +224,8 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
                 # listening_idx = set(self.async_contexts())
                 return await self.my_api.return_test_data()
 
-        except:
-            logging.debug(msg="Fetching update from WebIf failed")
+        except TimeoutError:
+            logging.debug(msg="Timeout while fetching data")
         # except ApiAuthError as err:
         # Raising ConfigEntryAuthFailed will cancel future updates
         # and start a config flow with SOURCE_REAUTH (async_step_reauth)
