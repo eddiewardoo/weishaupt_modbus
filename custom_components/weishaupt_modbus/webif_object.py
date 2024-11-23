@@ -62,7 +62,17 @@ class WebifConnection:
 
     async def return_test_data(self) -> dict[str, str]:
         """Return some values for testing."""
-        return {"Webifsensor": "TESTWERT"}
+
+        myreturn = {
+            "Webifsensor": "TESTWERT",
+            "Außentemperatur": 2,
+            "AT Mittelwert": -1,
+            "AT Langzeitwert": -20,
+            "Raumsolltemperatur": 22,
+            "Vorlaufsolltemperatur": 25,
+            "Vorlauftemperatur": 24,
+        }
+        return myreturn
 
     async def close(self) -> None:
         """Close connection to WebIf."""

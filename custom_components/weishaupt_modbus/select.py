@@ -24,7 +24,7 @@ async def async_setup_entry(
         coordinator = MyCoordinator(
             hass=hass,
             my_api=_modbus_api,
-            modbusitems=device,
+            api_items=device,
             p_config_entry=config_entry,
         )
         await coordinator.async_config_entry_first_refresh()
@@ -32,7 +32,7 @@ async def async_setup_entry(
         entries = await build_entity_list(
             entries=entries,
             config_entry=config_entry,
-            modbusitems=device,
+            api_items=device,
             item_type=TYPES.SELECT,
             coordinator=coordinator,
         )

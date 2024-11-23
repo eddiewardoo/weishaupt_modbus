@@ -29,7 +29,7 @@ class MyCoordinator(DataUpdateCoordinator):
         self,
         hass: HomeAssistant,
         my_api: ModbusAPI,
-        modbusitems: ModbusItem,
+        api_items: ModbusItem,
         p_config_entry: MyConfigEntry,
     ) -> None:
         """Initialize my coordinator."""
@@ -47,8 +47,8 @@ class MyCoordinator(DataUpdateCoordinator):
         )
         self._modbus_api = my_api
         self._device = None  #: MyDevice | None = None
-        self._modbusitems = modbusitems
-        self._number_of_items = len(modbusitems)
+        self._modbusitems = api_items
+        self._number_of_items = len(api_items)
         self._config_entry = p_config_entry
 
     async def get_value(self, modbus_item: ModbusItem):

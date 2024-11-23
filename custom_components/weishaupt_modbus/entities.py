@@ -25,9 +25,9 @@ from .const import (
     FORMATS,
     TYPES,
 )
-from .coordinator import MyCoordinator
+from .coordinator import MyCoordinator, MyWebIfCoordinator
 from .hpconst import reverse_device_list
-from .items import ModbusItem
+from .items import ModbusItem, WebItem
 from .kennfeld import PowerMap
 from .modbusobject import ModbusAPI, ModbusObject
 
@@ -66,7 +66,7 @@ async def check_available(modbus_item: ModbusItem, config_entry: MyConfigEntry) 
 async def build_entity_list(
     entries,
     config_entry: MyConfigEntry,
-    modbusitems: ModbusItem,
+    api_items: ModbusItem | WebItem,
     item_type,
     coordinator: MyCoordinator,
 ):
@@ -78,7 +78,7 @@ async def build_entity_list(
     stored in hpconst.py so far, will be provided by an external file in future
     """
 
-    for index, item in enumerate(modbusitems):
+    for index, item in enumerate(api_items):
         if item.type == item_type:
             if await check_available(item, config_entry=config_entry) is True:
                 match item_type:
@@ -127,7 +127,7 @@ class MyEntity(Entity):
     """
 
     _config_entry = None
-    _modbus_item = None
+    _api_item = None
     _divider = 1
     _attr_name = None
     _attr_unique_id = ""
@@ -140,12 +140,12 @@ class MyEntity(Entity):
     def __init__(
         self,
         config_entry: MyConfigEntry,
-        modbus_item: ModbusItem,
+        api_item: ModbusItem | WebItem,
         modbus_api: ModbusAPI,
     ) -> None:
         """Initialize the entity."""
         self._config_entry = config_entry
-        self._modbus_item = modbus_item
+        self._api_item: ModbusItem | WebItem = api_item
 
         dev_postfix = ""
         dev_postfix = "_" + self._config_entry.data[CONF_DEVICE_POSTFIX]
@@ -162,24 +162,24 @@ class MyEntity(Entity):
             name_device_prefix = ""
 
         if self._config_entry.data[CONF_NAME_TOPIC_PREFIX]:
-            name_topic_prefix = reverse_device_list[self._modbus_item.device] + "_"
+            name_topic_prefix = reverse_device_list[self._api_item.device] + "_"
         else:
             name_topic_prefix = ""
 
         name_prefix = name_topic_prefix + name_device_prefix
 
-        # self._attr_translation_key = self._modbus_item.translation_key
+        # self._attr_translation_key = self._api_item.translation_key
         # self._attr_translation_placeholders = {"prefix": name_prefix}
 
-        self._attr_name = name_prefix + self._modbus_item.name
-        self._attr_unique_id = dev_prefix + self._modbus_item.name + dev_postfix
-        self._dev_device = self._modbus_item.device + dev_postfix
+        self._attr_name = name_prefix + self._api_item.name
+        self._attr_unique_id = dev_prefix + self._api_item.name + dev_postfix
+        self._dev_device = self._api_item.device + dev_postfix
         self._modbus_api = modbus_api
 
-        if self._modbus_item.format != FORMATS.STATUS:
-            self._attr_native_unit_of_measurement = self._modbus_item.format
+        if self._api_item.format != FORMATS.STATUS:
+            self._attr_native_unit_of_measurement = self._api_item.format
 
-            match self._modbus_item.format:
+            match self._api_item.format:
                 case FORMATS.ENERGY:
                     self._attr_state_class = SensorStateClass.TOTAL_INCREASING
                 case (
@@ -192,16 +192,12 @@ class MyEntity(Entity):
                 ):
                     self._attr_state_class = SensorStateClass.MEASUREMENT
 
-            if self._modbus_item.resultlist is not None:
-                self._attr_native_min_value = self._modbus_item.get_number_from_text(
-                    "min"
-                )
-                self._attr_native_max_value = self._modbus_item.get_number_from_text(
-                    "max"
-                )
-                self._attr_native_step = self._modbus_item.get_number_from_text("step")
-                self._divider = self._modbus_item.get_number_from_text("divider")
-                self._attr_device_class = self._modbus_item.get_text_from_number(-1)
+            if self._api_item.resultlist is not None:
+                self._attr_native_min_value = self._api_item.get_number_from_text("min")
+                self._attr_native_max_value = self._api_item.get_number_from_text("max")
+                self._attr_native_step = self._api_item.get_number_from_text("step")
+                self._divider = self._api_item.get_number_from_text("divider")
+                self._attr_device_class = self._api_item.get_text_from_number(-1)
 
     def calc_temperature(self, val: float) -> float:
         """Calcualte temperature."""
@@ -238,13 +234,13 @@ class MyEntity(Entity):
         """Translate modbus value into sensful format."""
         if val is None:
             return val
-        match self._modbus_item.format:
+        match self._api_item.format:
             case FORMATS.TEMPERATUR:
                 return self.calc_temperature(val)
             case FORMATS.PERCENTAGE:
                 return self.calc_percentage(val)
             case FORMATS.STATUS:
-                return self._modbus_item.get_text_from_number(
+                return self._api_item.get_text_from_number(
                     val
                 )  # translation_key_from_number(val)
             case FORMATS.UNKNOWN:
@@ -255,12 +251,10 @@ class MyEntity(Entity):
     def retranslate_val(self, value) -> int:
         """Re-translate modbus value into sensful format."""
         val = None
-        match self._modbus_item.format:
+        match self._api_item.format:
             # logically, this belongs to the ModbusItem, but doing it here
             case FORMATS.STATUS:
-                val = self._modbus_item.get_number_from_text(
-                    val
-                )  # translation_key(value)
+                val = self._api_item.get_number_from_text(val)  # translation_key(value)
             case _:
                 val = value * self._divider
         return val
@@ -270,7 +264,7 @@ class MyEntity(Entity):
         val = self.retranslate_val(value)
 
         await self._modbus_api.connect()
-        mbo = ModbusObject(self._modbus_api, self._modbus_item)
+        mbo = ModbusObject(self._modbus_api, self._api_item)
         await mbo.setvalue(val)
 
     def my_device_info(self) -> DeviceInfo:
@@ -283,6 +277,11 @@ class MyEntity(Entity):
             "model": "Device_model",
             "manufacturer": "Weishaupt",
         }
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device info."""
+        return MySensorEntity.my_device_info(self)
 
 
 class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
@@ -311,7 +310,7 @@ class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        self._attr_native_value = self.translate_val(self._modbus_item.state)
+        self._attr_native_value = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 
     @property
@@ -345,7 +344,7 @@ class MyCalcSensorEntity(MySensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        self._attr_native_value = self.translate_val(self._modbus_item.state)
+        self._attr_native_value = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 
     def calc_power(self, val, x, y):
@@ -378,7 +377,7 @@ class MyCalcSensorEntity(MySensorEntity):
             return None
         val_y = val_y / 10
 
-        match self._modbus_item.format:
+        match self._api_item.format:
             case FORMATS.POWER:
                 return round(self.calc_power(val_0, val_x, val_y))
             case _:
@@ -417,22 +416,22 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
         self._idx = idx
         MyEntity.__init__(self, config_entry, modbus_item, coordinator.modbus_api)
 
-        if self._modbus_item.resultlist is not None:
-            self._attr_native_min_value = self._modbus_item.get_number_from_text("min")
-            self._attr_native_max_value = self._modbus_item.get_number_from_text("max")
-            self._attr_native_step = self._modbus_item.get_number_from_text("step")
+        if self._api_item.resultlist is not None:
+            self._attr_native_min_value = self._api_item.get_number_from_text("min")
+            self._attr_native_max_value = self._api_item.get_number_from_text("max")
+            self._attr_native_step = self._api_item.get_number_from_text("step")
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        self._attr_native_value = self.translate_val(self._modbus_item.state)
+        self._attr_native_value = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
         """Send value over modbus and refresh HA."""
         await self.set_translate_val(value)
-        self._modbus_item.state = int(self.retranslate_val(value))
-        self._attr_native_value = self.translate_val(self._modbus_item.state)
+        self._api_item.state = int(self.retranslate_val(value))
+        self._attr_native_value = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 
     @property
@@ -467,21 +466,21 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         ]
         # option list build from the status list of the ModbusItem
         self.options = []
-        for _useless, item in enumerate(self._modbus_item.resultlist):
+        for _useless, item in enumerate(self._api_item.resultlist):
             self.options.append(item.text)  # translation_key)
 
     async def async_select_option(self, option: str) -> None:
         """Write the selected option to modbus and refresh HA."""
         # the synching is done by the ModbusObject of the entity
         await self.set_translate_val(option)
-        self._modbus_item.state = int(self.retranslate_val(option))
-        self._attr_current_option = self.translate_val(self._modbus_item.state)
+        self._api_item.state = int(self.retranslate_val(option))
+        self._attr_current_option = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        self._attr_current_option = self.translate_val(self._modbus_item.state)
+        self._attr_current_option = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 
     @property
@@ -490,7 +489,7 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         return MyEntity.my_device_info(self)
 
 
-class MyWebifEntity(CoordinatorEntity, SensorEntity):
+class MyWebifSensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
     """An entity using CoordinatorEntity.
 
     The CoordinatorEntity class provides:
@@ -501,18 +500,44 @@ class MyWebifEntity(CoordinatorEntity, SensorEntity):
 
     """
 
-    _attr_name = "Webif Sensor"
+    _webif_item = None
+    _attr_name = None
 
-    def __init__(self, coordinator, idx) -> None:
-        """Pass coordinator to CoordinatorEntity."""
-        super().__init__(coordinator=coordinator, context=idx)
+    _attr_native_unit_of_measurement = None
+    _attr_device_class = None
+    _attr_state_class = None
+
+    def __init__(
+        self,
+        config_entry: MyConfigEntry,
+        api_item: WebItem,
+        coordinator: MyWebIfCoordinator,
+        idx,
+    ) -> None:
+        """Initialize of MySensorEntity."""
+        super().__init__(coordinator, context=idx)
         self.idx = idx
+        MyEntity.__init__(
+            self=self, config_entry=config_entry, api_item=api_item, modbus_api=None
+        )
+        self.idx = idx
+        self._api_item = api_item
+        self._attr_name = api_item.name
+
+        dev_prefix = CONST.DEF_PREFIX
+        dev_prefix = self._config_entry.data[CONF_PREFIX]
+        if self._config_entry.data[CONF_DEVICE_POSTFIX] == "_":
+            dev_postfix = ""
+        else:
+            dev_postfix = self._config_entry.data[CONF_DEVICE_POSTFIX]
+
+        self._attr_unique_id = dev_prefix + self._api_item.name + dev_postfix + "webif"
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        # print(self.coordinator.data["Webifsensor"])
-        self._attr_native_value = self.coordinator.data["Webifsensor"]
+        # print(self.coordinator.data)
+        self._attr_native_value = self.coordinator.data[self._api_item.name]
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs):
