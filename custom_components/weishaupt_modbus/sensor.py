@@ -60,7 +60,7 @@ async def async_setup_entry(
             coordinator=coordinator,
         )
 
-    webifcoordinator = MyWebIfCoordinator(hass)
+    webifcoordinator = MyWebIfCoordinator(hass=hass)
     webifentitiys: list[MyWebifEntity] = [
         MyWebifEntity(coordinator=webifcoordinator, idx=1)
     ]

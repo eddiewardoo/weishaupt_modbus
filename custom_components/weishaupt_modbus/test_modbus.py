@@ -1,11 +1,12 @@
+"""Scan all possible modbus registers for a value."""
+
 import asyncio
 
 from pymodbus import ExceptionResponse, ModbusException, pymodbus_apply_logging_config
 import pymodbus.client as ModbusClient
-from pymodbus.client import AsyncModbusTcpClient as AsyncModbusTcpClient
 
 
-async def main():
+async def main():  # noqa: D103
     pymodbus_apply_logging_config("DEBUG")
     host = "192.168.42.144"  # 10.10.1.225"
     port = 502
@@ -22,7 +23,7 @@ async def main():
     input_register = range(30001, 39999)
     holding_register = range(40001, 49999)
 
-    file = open("register.txt", "w")
+    file = open(file="register.txt", mode="w", encoding="UTF-8")  # noqa: ASYNC230, PTH123
 
     file.write("Binary out\n\n")
 
@@ -48,10 +49,7 @@ async def main():
             rr = await client.read_coils(register, 1, slave=1)
         except ModbusException as exc:
             val = exc
-        if rr.isError():
-            val = rr
-            writeit = False
-        elif isinstance(rr, ExceptionResponse):
+        if rr.isError() or isinstance(rr, ExceptionResponse):
             val = rr
             writeit = False
         elif len(rr.registers) > 0:
@@ -69,10 +67,7 @@ async def main():
             rr = await client.read_input_registers(register, slave=1)
         except ModbusException as exc:
             val = exc
-        if rr.isError():
-            val = rr
-            writeit = False
-        elif isinstance(rr, ExceptionResponse):
+        if rr.isError() or isinstance(rr, ExceptionResponse):
             val = rr
             writeit = False
         elif len(rr.registers) > 0:
@@ -90,10 +85,7 @@ async def main():
             rr = await client.read_holding_registers(register, slave=1)
         except ModbusException as exc:
             val = exc
-        if rr.isError():
-            val = rr
-            writeit = False
-        elif isinstance(rr, ExceptionResponse):
+        if rr.isError() or isinstance(rr, ExceptionResponse):
             val = rr
             writeit = False
         elif len(rr.registers) > 0:

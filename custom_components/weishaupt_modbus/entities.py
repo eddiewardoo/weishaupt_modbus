@@ -11,6 +11,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .configentry import MyConfigEntry
 from .const import (
     CONF_DEVICE_POSTFIX,
     CONF_HK2,
@@ -29,14 +30,13 @@ from .hpconst import reverse_device_list
 from .items import ModbusItem
 from .kennfeld import PowerMap
 from .modbusobject import ModbusAPI, ModbusObject
-from .configentry import MyConfigEntry
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
 async def check_available(modbus_item: ModbusItem, config_entry: MyConfigEntry) -> bool:
-    """function checks if item is valid and available"""
+    """Check if item is valid and available."""
     log.debug("Check if item %s is available ..", modbus_item.name)
     if config_entry.data[CONF_HK2] is False:
         if modbus_item.device is DEVICES.HZ2:
@@ -80,32 +80,23 @@ async def build_entity_list(
 
     for index, item in enumerate(modbusitems):
         if item.type == item_type:
-            if (
-                await check_available(modbusitems[index], config_entry=config_entry)
-                is True
-            ):
+            if await check_available(item, config_entry=config_entry) is True:
                 match item_type:
                     # here the entities are created with the parameters provided
                     # by the ModbusItem object
                     case TYPES.SENSOR | TYPES.NUMBER_RO:
-                        log.debug(
-                            "Add item %s to entity list ..", modbusitems[index].name
-                        )
+                        log.debug("Add item %s to entity list ..", item.name)
                         entries.append(
-                            MySensorEntity(
-                                config_entry, modbusitems[index], coordinator, index
-                            )
+                            MySensorEntity(config_entry, item, coordinator, index)
                         )
                     case TYPES.SENSOR_CALC:
                         pwrmap = PowerMap(config_entry)
                         await pwrmap.initialize()
-                        log.debug(
-                            "Add item %s to entity list ..", modbusitems[index].name
-                        )
+                        log.debug("Add item %s to entity list ..", item.name)
                         entries.append(
                             MyCalcSensorEntity(
                                 config_entry,
-                                modbusitems[index],
+                                item,
                                 coordinator,
                                 index,
                                 pwrmap,
@@ -113,15 +104,11 @@ async def build_entity_list(
                         )
                     case TYPES.SELECT:
                         entries.append(
-                            MySelectEntity(
-                                config_entry, modbusitems[index], coordinator, index
-                            )
+                            MySelectEntity(config_entry, item, coordinator, index)
                         )
                     case TYPES.NUMBER:
                         entries.append(
-                            MyNumberEntity(
-                                config_entry, modbusitems[index], coordinator, index
-                            )
+                            MyNumberEntity(config_entry, item, coordinator, index)
                         )
 
     return entries
@@ -189,10 +176,10 @@ class MyEntity(Entity):
         self._dev_device = self._modbus_item.device + dev_postfix
         self._modbus_api = modbus_api
 
-        if self._modbus_item._format != FORMATS.STATUS:
-            self._attr_native_unit_of_measurement = self._modbus_item._format
+        if self._modbus_item.format != FORMATS.STATUS:
+            self._attr_native_unit_of_measurement = self._modbus_item.format
 
-            match self._modbus_item._format:
+            match self._modbus_item.format:
                 case FORMATS.ENERGY:
                     self._attr_state_class = SensorStateClass.TOTAL_INCREASING
                 case (
@@ -316,9 +303,10 @@ class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
         coordinator: MyCoordinator,
         idx,
     ) -> None:
+        """Initialize of MySensorEntity."""
         super().__init__(coordinator, context=idx)
         self.idx = idx
-        MyEntity.__init__(self, config_entry, modbus_item, coordinator._modbus_api)
+        MyEntity.__init__(self, config_entry, modbus_item, coordinator.modbus_api)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -350,6 +338,7 @@ class MyCalcSensorEntity(MySensorEntity):
         idx,
         pwrmap: PowerMap,
     ) -> None:
+        """Initialize MyCalcSensorEntity."""
         MySensorEntity.__init__(self, config_entry, modbus_item, coordinator, idx)
         self.my_map = pwrmap
 
@@ -404,7 +393,9 @@ class MyCalcSensorEntity(MySensorEntity):
 
 
 class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
-    """class that represents a sensor entity derived from Sensorentity
+    """Represent a Number Entity.
+
+    Class that represents a sensor entity derived from Sensorentity
     and decorated with general parameters from MyEntity
     """
 
@@ -421,9 +412,10 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
         coordinator: MyCoordinator,
         idx,
     ) -> None:
+        """Initialize NyNumberEntity."""
         super().__init__(coordinator, context=idx)
         self._idx = idx
-        MyEntity.__init__(self, config_entry, modbus_item, coordinator._modbus_api)
+        MyEntity.__init__(self, config_entry, modbus_item, coordinator.modbus_api)
 
         if self._modbus_item.resultlist is not None:
             self._attr_native_min_value = self._modbus_item.get_number_from_text("min")
@@ -437,6 +429,7 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
         self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
+        """Send value over modbus and refresh HA."""
         await self.set_translate_val(value)
         self._modbus_item.state = int(self.retranslate_val(value))
         self._attr_native_value = self.translate_val(self._modbus_item.state)
@@ -449,7 +442,9 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
 
 
 class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
-    """class that represents a sensor entity derived from Sensorentity
+    """Class that represents a sensor entity.
+
+    Class that represents a sensor entity derived from Sensorentity
     and decorated with general parameters from MyEntity
     """
 
@@ -463,18 +458,20 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         coordinator: MyCoordinator,
         idx,
     ) -> None:
+        """Initialze MySelectEntity."""
         super().__init__(coordinator, context=idx)
         self._idx = idx
-        MyEntity.__init__(self, config_entry, modbus_item, coordinator._modbus_api)
+        MyEntity.__init__(self, config_entry, modbus_item, coordinator.modbus_api)
         self.async_internal_will_remove_from_hass_port = self._config_entry.data[
             CONF_PORT
         ]
         # option list build from the status list of the ModbusItem
         self.options = []
-        for _useless, item in enumerate(self._modbus_item._resultlist):
+        for _useless, item in enumerate(self._modbus_item.resultlist):
             self.options.append(item.text)  # translation_key)
 
     async def async_select_option(self, option: str) -> None:
+        """Write the selected option to modbus and refresh HA."""
         # the synching is done by the ModbusObject of the entity
         await self.set_translate_val(option)
         self._modbus_item.state = int(self.retranslate_val(option))
@@ -506,9 +503,9 @@ class MyWebifEntity(CoordinatorEntity, SensorEntity):
 
     _attr_name = "Webif Sensor"
 
-    def __init__(self, coordinator, idx):
+    def __init__(self, coordinator, idx) -> None:
         """Pass coordinator to CoordinatorEntity."""
-        super().__init__(coordinator, context=idx)
+        super().__init__(coordinator=coordinator, context=idx)
         self.idx = idx
 
     @callback

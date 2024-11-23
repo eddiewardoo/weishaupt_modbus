@@ -8,12 +8,7 @@ import warnings
 from pymodbus import ModbusException
 
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-    DataUpdateCoordinator,
-    UpdateFailed,
-)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .configentry import MyConfigEntry
 from .const import CONF_HK2, CONF_HK3, CONF_HK4, CONF_HK5, CONST, FORMATS, TYPES
@@ -176,6 +171,11 @@ class MyCoordinator(DataUpdateCoordinator):
             except ModbusException:
                 warnings.warn(message="connection to the heatpump failed")
 
+    @property
+    def modbus_api(self) -> str:
+        """Return modbus_api."""
+        return self._modbus_api
+
 
 class MyWebIfCoordinator(DataUpdateCoordinator):
     """My custom coordinator."""
@@ -194,7 +194,7 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
             # being dispatched to listeners
             always_update=True,
         )
-        self.my_api = WebifConnection()
+        self.my_api = WebifConnection(entry=MyConfigEntry)
         # self._device: MyDevice | None = None
 
     async def _async_setup(self):
@@ -225,7 +225,7 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
                 return await self.my_api.return_test_data()
 
         except:
-            print("fetch data failed")
+            logging.debug(msg="Fetching update from WebIf failed")
         # except ApiAuthError as err:
         # Raising ConfigEntryAuthFailed will cancel future updates
         # and start a config flow with SOURCE_REAUTH (async_step_reauth)

@@ -14,10 +14,9 @@ from pymodbus.client import AsyncModbusTcpClient
 
 from homeassistant.const import CONF_HOST, CONF_PORT
 
-from .const import TYPES, FORMATS
-from .items import ModbusItem
-
 from .configentry import MyConfigEntry
+from .const import FORMATS, TYPES
+from .items import ModbusItem
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -53,8 +52,7 @@ class ModbusAPI:
                 await self._modbus_client.connect()
                 if self._modbus_client.connected:
                     return self._modbus_client.connected
-                else:
-                    await asyncio.sleep(1)
+                await asyncio.sleep(1)
             warnings.warn("Connection to heatpump succeeded")
 
         except ModbusException:
@@ -100,7 +98,7 @@ class ModbusObject:
         self._modbus_client = modbus_api.get_device()
 
     def check_valid(self, val):
-        """Checks if item is available and valid"""
+        """Check if item is available and valid."""
         match self._modbus_item.format:
             case FORMATS.TEMPERATUR:
                 self.check_temperature(val)
@@ -115,7 +113,7 @@ class ModbusObject:
                 self._modbus_item.is_invalid = False
 
     def check_temperature(self, val):
-        """Checks availability of temperature item"""
+        """Check availability of temperature item."""
         match val:
             case -32768:
                 # No Sensor installed, remove it from the list
@@ -127,14 +125,14 @@ class ModbusObject:
                 self._modbus_item.is_invalid = False
 
     def check_percentage(self, val):
-        """Checks availability of percentage item"""
+        """Check availability of percentage item."""
         if val == 65535:
             self._modbus_item.is_invalid = True
         else:
             self._modbus_item.is_invalid = False
 
     def check_status(self, val):
-        """Checks general availability of item"""
+        """Check general availability of item."""
         _useless = val
         self._modbus_item.is_invalid = False
 
@@ -257,7 +255,7 @@ class ModbusObject:
     async def setvalue(self, value) -> None:
         """Set the value of the modbus register, does nothing when not R/W."""
         if self._modbus_client is None:
-            return None
+            return
         try:
             match self._modbus_item.type:
                 case TYPES.SENSOR | TYPES.NUMBER_RO | TYPES.SENSOR_CALC:
@@ -276,4 +274,4 @@ class ModbusObject:
                 + " ("
                 + str(self._modbus_item.address + ")" + " failed")
             )
-            return None
+            return
