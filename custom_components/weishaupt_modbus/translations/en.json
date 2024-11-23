@@ -31,28 +31,28 @@
             "name": "System"
         },
         "dev_waermepumpe": {
-            "name": "Heat pump"
+            "name": "Heat Pump"
         },
         "dev_warmwasser": {
-            "name": "Hot water"
+            "name": "Hot Water"
         },
         "dev_heizkreis": {
-            "name": "Heating circuit"
+            "name": "Heating Circuit"
         },
         "dev_heizkreis2": {
-            "name": "Heating circuit 2"
+            "name": "Heating Circuit 2"
         },
         "dev_heizkreis3": {
-            "name": "Heating circuit 3"
+            "name": "Heating Circuit 3"
         },
         "dev_heizkreis4": {
-            "name": "Heating circuit 4"
+            "name": "Heating Circuit 4"
         },
         "dev_heizkreis5": {
-            "name": "Heating circuit 5"
+            "name": "Heating Circuit 5"
         },
         "dev_waermeerzeuger2": {
-            "name": "2nd heat source"
+            "name": "2nd Heat Source"
         },
         "dev_statistik": {
             "name": "Statistics"
@@ -67,102 +67,102 @@
     "entity": {
         "number": {
             "bivalenztemp": {
-                "name": "{prefix}Bivalence temperature"
+                "name": "{prefix}Bivalence Temperature"
             },
             "bivalenztemp_ww": {
-                "name": "{prefix}Bivalence temperature HW"
+                "name": "{prefix}Bivalence Temperature HW"
             },
             "grenztemp": {
-                "name": "{prefix}Limit temperature"
+                "name": "{prefix}Limit Temperature"
             },
             "heizkennlinie": {
-                "name": "{prefix}Heating curve"
+                "name": "{prefix}Heating Curve"
             },
             "heizkennlinie2": {
-                "name": "{prefix}Heating curve"
+                "name": "{prefix}Heating Curve"
             },
             "heizkennlinie3": {
-                "name": "{prefix}Heating curve"
+                "name": "{prefix}Heating Curve"
             },
             "heizkennlinie4": {
-                "name": "{prefix}Heating curve"
+                "name": "{prefix}Heating Curve"
             },
             "heizkennlinie5": {
-                "name": "{prefix}Heating curve"
+                "name": "{prefix}Heating Curve"
             },
             "raum_soll_temp_absenk": {
-                "name": "{prefix}Room setpoint temperature lowering"
+                "name": "{prefix}Room Setpoint Temperature Lowering"
             },
             "raum_soll_temp_absenk2": {
-                "name": "{prefix}Room setpoint temperature lowering"
+                "name": "{prefix}Room Setpoint Temperature Lowering"
             },
             "raum_soll_temp_absenk3": {
-                "name": "{prefix}Room setpoint temperature lowering"
+                "name": "{prefix}Room Setpoint Temperature Lowering"
             },
             "raum_soll_temp_absenk4": {
-                "name": "{prefix}Room setpoint temperature lowering"
+                "name": "{prefix}Room Setpoint Temperature Lowering"
             },
             "raum_soll_temp_absenk5": {
-                "name": "{prefix}Room setpoint temperature lowering"
+                "name": "{prefix}Room Setpoint Temperature Lowering"
             },
             "raum_soll_temp_komf": {
-                "name": "{prefix}Room setpoint temperature comfort"
+                "name": "{prefix}Room Setpoint Temperature Comfort"
             },
             "raum_soll_temp_komf2": {
-                "name": "{prefix}Room setpoint temperature comfort"
+                "name": "{prefix}Room Setpoint Temperature Comfort"
             },
             "raum_soll_temp_komf3": {
-                "name": "{prefix}Room setpoint temperature comfort"
+                "name": "{prefix}Room Setpoint Temperature Comfort"
             },
             "raum_soll_temp_komf4": {
-                "name": "{prefix}Room setpoint temperature comfort"
+                "name": "{prefix}Room Setpoint Temperature Comfort"
             },
             "raum_soll_temp_komf5": {
-                "name": "{prefix}Room setpoint temperature comfort"
+                "name": "{prefix}Room Setpoint Temperature Comfort"
             },
             "raum_soll_temp_normal": {
-                "name": "{prefix}Room setpoint temperature normal"
+                "name": "{prefix}Room Setpoint Temperature Normal"
             },
             "raum_soll_temp_normal2": {
-                "name": "{prefix}Room setpoint temperature normal"
+                "name": "{prefix}Room Setpoint Temperature Normal"
             },
             "raum_soll_temp_normal3": {
-                "name": "{prefix}Room setpoint temperature normal"
+                "name": "{prefix}Room Setpoint Temperature Normal"
             },
             "raum_soll_temp_normal4": {
-                "name": "{prefix}Room setpoint temperature normal"
+                "name": "{prefix}Room Setpoint Temperature Normal"
             },
             "raum_soll_temp_normal5": {
-                "name": "{prefix}Room setpoint temperature normal"
+                "name": "{prefix}Room Setpoint Temperature Normal"
             },
             "sgr_anhebung": {
-                "name": "{prefix}SG Ready increase"
+                "name": "{prefix}SG Ready Increase"
             },
             "so_wi_umschalt": {
-                "name": "{prefix}Summer winter changeover"
+                "name": "{prefix}Summer Winter Changeover"
             },
             "so_wi_umschalt2": {
-                "name": "{prefix}Summer winter changeover"
+                "name": "{prefix}Summer Winter Changeover"
             },
             "so_wi_umschalt3": {
-                "name": "{prefix}Summer winter changeover"
+                "name": "{prefix}Summer Winter Changeover"
             },
             "so_wi_umschalt4": {
-                "name": "{prefix}Summer winter changeover"
+                "name": "{prefix}Summer Winter Changeover"
             },
             "so_wi_umschalt5": {
-                "name": "{prefix}Summer winter changeover"
+                "name": "{prefix}Summer Winter Changeover"
             },
             "ww_absenk": {
-                "name": "{prefix}lowering"
+                "name": "{prefix}Lowering"
             },
             "ww_normal": {
-                "name": "{prefix}normal"
+                "name": "{prefix}Normal"
             }
         },
         "select": {
             "hz_betriebsart": {
-                "name": "{prefix}Operation mode",
+                "name": "{prefix}Operation Mode",
                 "state": {
                     "hz_betriebsart_absenk": "Lowering mode",
                     "hz_betriebsart_auto": "Automatic",
@@ -172,7 +172,7 @@
                 }
             },
             "hz_betriebsart2": {
-                "name": "{prefix}Operation mode",
+                "name": "{prefix}Operation Mode",
                 "state": {
                     "hz_betriebsart_absenk": "Lowering mode",
                     "hz_betriebsart_auto": "Automatic",
@@ -182,7 +182,7 @@
                 }
             },
             "hz_betriebsart3": {
-                "name": "{prefix}Operation mode",
+                "name": "{prefix}Operation Mode",
                 "state": {
                     "hz_betriebsart_absenk": "Lowering mode",
                     "hz_betriebsart_auto": "Automatic",
@@ -192,7 +192,7 @@
                 }
             },
             "hz_betriebsart4": {
-                "name": "{prefix}Operation mode",
+                "name": "{prefix}Operation Mode",
                 "state": {
                     "hz_betriebsart_absenk": "Lowering mode",
                     "hz_betriebsart_auto": "Automatic",
@@ -202,7 +202,7 @@
                 }
             },
             "hz_betriebsart5": {
-                "name": "{prefix}Operation mode",
+                "name": "{prefix}Operation Mode",
                 "state": {
                     "hz_betriebsart_absenk": "Lowering mode",
                     "hz_betriebsart_auto": "Automatic",
@@ -482,7 +482,7 @@
                 }
             },
             "systembetriebsart": {
-                "name": "{prefix}System operation mode",
+                "name": "{prefix}Operation Mode",
                 "state": {
                     "sys_betriebsart_2wez": "2nd heat source",
                     "sys_betriebsart_automatik": "Automatic",
@@ -548,16 +548,16 @@
         },
         "sensor": {
             "abtau_energie_gester": {
-                "name": "{prefix}Defrost energy yesterday"
+                "name": "{prefix}Defrost Energy Yesterday"
             },
             "abtau_energie_heute": {
-                "name": "{prefix}Defrost energy today"
+                "name": "{prefix}Defrost Energy Today"
             },
             "abtau_energie_jahr": {
-                "name": "{prefix}Defrost energy year"
+                "name": "{prefix}Defrost Energy Year"
             },
             "abtau_energie_monat": {
-                "name": "{prefix}Defrost energy month"
+                "name": "{prefix}Defrost Energy Month"
             },
             "adr31106": {
                 "name": "{prefix}Adr. 31106"
@@ -592,7 +592,7 @@
                 }
             },
             "anf_typ": {
-                "name": "{prefix}Request type",
+                "name": "{prefix}Request Type",
                 "state": {
                     "hz_anforderung_aus": "off",
                     "hz_anforderung_konstant": "constrant",
@@ -600,7 +600,7 @@
                 }
             },
             "anf_typ2": {
-                "name": "{prefix}Request type",
+                "name": "{prefix}Request Type",
                 "state": {
                     "hz_anforderung_aus": "off",
                     "hz_anforderung_konstant": "constrant",
@@ -608,7 +608,7 @@
                 }
             },
             "anf_typ3": {
-                "name": "{prefix}Request type",
+                "name": "{prefix}Request Type",
                 "state": {
                     "hz_anforderung_aus": "off",
                     "hz_anforderung_konstant": "constrant",
@@ -616,7 +616,7 @@
                 }
             },
             "anf_typ4": {
-                "name": "{prefix}Request type",
+                "name": "{prefix}Request Type",
                 "state": {
                     "hz_anforderung_aus": "off",
                     "hz_anforderung_konstant": "constrant",
@@ -624,7 +624,7 @@
                 }
             },
             "anf_typ5": {
-                "name": "{prefix}Request type",
+                "name": "{prefix}Request Type",
                 "state": {
                     "hz_anforderung_aus": "off",
                     "hz_anforderung_konstant": "constrant",
@@ -647,10 +647,10 @@
                 "name": "{prefix}Output H1.5"
             },
             "aussentemp": {
-                "name": "{prefix}Outside temperature"
+                "name": "{prefix}Outside Temperature"
             },
             "betriebsanzeige": {
-                "name": "{prefix}Operation indicator",
+                "name": "{prefix}Operation Indicator",
                 "state": {
                     "sys_betrieb_0": "undefined",
                     "sys_betrieb_1": "Relais test",
@@ -692,10 +692,10 @@
                 }
             },
             "betriebss_e1": {
-                "name": "{prefix}Operation hours E1"
+                "name": "{prefix}Operation Hours E1"
             },
             "betriebss_e2": {
-                "name": "{prefix}Operation hours E2"
+                "name": "{prefix}Operation Hours E2"
             },
             "eing_de1": {
                 "name": "{prefix}Input DE1",
@@ -712,16 +712,16 @@
                 }
             },
             "el_energie_getern": {
-                "name": "{prefix}Electr. energy yesterday"
+                "name": "{prefix}Electr. Energy Yesterday"
             },
             "el_energie_heute": {
-                "name": "{prefix}Electr. energy today"
+                "name": "{prefix}Electr. Energy Today"
             },
             "el_energie_jahr": {
-                "name": "{prefix}Electr. energy year"
+                "name": "{prefix}Electr. Energy Year"
             },
             "el_energie_monat": {
-                "name": "{prefix}Electr. energy month"
+                "name": "{prefix}Electr. Energy Month"
             },
             "fehler": {
                 "name": "{prefix}Error",
@@ -863,77 +863,77 @@
                 }
             },
             "fehlerfrei": {
-                "name": "{prefix}No error",
+                "name": "{prefix}No Error",
                 "state": {
                     "fehler_aktiv": "Error active",
                     "stoerungsfreier_betrieb": "Fault-free operation"
                 }
             },
             "ges_energie_2_getern": {
-                "name": "{prefix}Total energy II yesterday"
+                "name": "{prefix}Total Energy II Yesterday"
             },
             "ges_energie_2_heute": {
-                "name": "{prefix}Total energy II today"
+                "name": "{prefix}Total Energy II Today"
             },
             "ges_energie_2_jahr": {
-                "name": "{prefix}Total energy II year"
+                "name": "{prefix}Total Energy II Year"
             },
             "ges_energie_2_monat": {
-                "name": "{prefix}Total energy II month"
+                "name": "{prefix}Total Energy II Month"
             },
             "ges_energie_getern": {
-                "name": "{prefix}Total energy yesterday"
+                "name": "{prefix}Total Energy Yesterday"
             },
             "ges_energie_heute": {
-                "name": "{prefix}Total energy today"
+                "name": "{prefix}Total Energy Today"
             },
             "ges_energie_jahr": {
-                "name": "{prefix}Total energy year"
+                "name": "{prefix}Total Energy Year"
             },
             "ges_energie_monat": {
-                "name": "{prefix}Total energy month"
+                "name": "{prefix}Total Energy Month"
             },
             "heiz_energie_getern": {
-                "name": "{prefix}Heating energy yesterday"
+                "name": "{prefix}Heating Energy Yesterday"
             },
             "heiz_energie_heute": {
-                "name": "{prefix}Heating energy today"
+                "name": "{prefix}Heating Energy Today"
             },
             "heiz_energie_jahr": {
-                "name": "{prefix}Heating energy year"
+                "name": "{prefix}Heating Energy Year"
             },
             "heiz_energie_monat": {
-                "name": "{prefix}Heating energy month"
+                "name": "{prefix}Heating Energy Month"
             },
             "heiz_konstanttemp": {
-                "name": "{prefix}Heating constant temperature"
+                "name": "{prefix}Heating Constant Temperature"
             },
             "heiz_konstanttemp2": {
-                "name": "{prefix}Heating constant temperature"
+                "name": "{prefix}Heating Constant Temperature"
             },
             "heiz_konstanttemp3": {
-                "name": "{prefix}Heating constant temperature"
+                "name": "{prefix}Heating Constant Temperature"
             },
             "heiz_konstanttemp4": {
-                "name": "{prefix}Heating constant temperature"
+                "name": "{prefix}Heating Constant Temperature"
             },
             "heiz_konstanttemp5": {
-                "name": "{prefix}Heating constant temperature"
+                "name": "{prefix}Heating Constant Temperature"
             },
             "heiz_konstanttemp_absenk": {
-                "name": "{prefix}Heating constant temp. lowering"
+                "name": "{prefix}Heating constant Temp. Lowering"
             },
             "heiz_konstanttemp_absenk2": {
-                "name": "{prefix}Heating constant temp. lowering"
+                "name": "{prefix}Heating constant Temp. Lowering"
             },
             "heiz_konstanttemp_absenk3": {
-                "name": "{prefix}Heating constant temp. lowering"
+                "name": "{prefix}Heating constant Temp. Lowering"
             },
             "heiz_konstanttemp_absenk4": {
-                "name": "{prefix}Heating constant temp. lowering"
+                "name": "{prefix}Heating constant Temp. Lowering"
             },
             "heiz_konstanttemp_absenk5": {
-                "name": "{prefix}Heating constant temp. lowering"
+                "name": "{prefix}Heating constant Temp. Lowering"
             },
             "hz_konf": {
                 "name": "{prefix}Configuration",
@@ -981,19 +981,19 @@
                 }
             },
             "hz_vl_temp": {
-                "name": "{prefix}feed temperature"
+                "name": "{prefix}Feed Temperature"
             },
             "hz_vl_temp2": {
-                "name": "{prefix}feed temperature"
+                "name": "{prefix}Feed Temperature"
             },
             "hz_vl_temp3": {
-                "name": "{prefix}feed temperature"
+                "name": "{prefix}Feed Temperature"
             },
             "hz_vl_temp4": {
-                "name": "{prefix}feed temperature"
+                "name": "{prefix}Feed Temperature"
             },
             "hz_vl_temp5": {
-                "name": "{prefix}feed temperature"
+                "name": "{prefix}Feed Temperature"
             },
             "konf_ausg_h12": {
                 "name": "{prefix}Conf. Output H1.2",
@@ -1164,94 +1164,94 @@
                 }
             },
             "kuehl_energie_getern": {
-                "name": "{prefix}Cooling energy yesterday"
+                "name": "{prefix}Cooling Energy Yesterday"
             },
             "kuehl_energie_heute": {
-                "name": "{prefix}Cooling energy today"
+                "name": "{prefix}Cooling Energy Today"
             },
             "kuehl_energie_jahr": {
-                "name": "{prefix}Cooling energy year"
+                "name": "{prefix}Cooling Energy Year"
             },
             "kuehl_energie_monat": {
-                "name": "{prefix}Cooling energy month"
+                "name": "{prefix}Cooling Energy Month"
             },
             "kuehl_konstanttemp": {
                 "name": "{prefix}Cooling constant temperature"
             },
             "kuehl_konstanttemp2": {
-                "name": "{prefix}Cooling constant temperature 2"
+                "name": "{prefix}Cooling constant temperature"
             },
             "kuehl_konstanttemp3": {
-                "name": "{prefix}Cooling constant temperature 3"
+                "name": "{prefix}Cooling constant temperature"
             },
             "kuehl_konstanttemp4": {
-                "name": "{prefix}Cooling constant temperature 4"
+                "name": "{prefix}Cooling constant temperature"
             },
             "kuehl_konstanttemp5": {
-                "name": "{prefix}Cooling constant temperature 5"
+                "name": "{prefix}Cooling constant temperature"
             },
             "leistungsanforderung": {
-                "name": "{prefix}Power request"
+                "name": "{prefix}Power Request"
             },
             "luftansautgemp": {
-                "name": "{prefix}Air intake temperature"
+                "name": "{prefix}Air Intake Temperature"
             },
             "puffer_temp": {
-                "name": "{prefix}Buffer temperature"
+                "name": "{prefix}Buffer Temperature"
             },
             "pumpe_einschaltart": {
-                "name": "{prefix}Pump operation mode"
+                "name": "{prefix}Pump Operation Mode"
             },
             "raum_feuchte": {
-                "name": "{prefix}Room humidity"
+                "name": "{prefix}Room Humidity"
             },
             "raum_feuchte2": {
-                "name": "{prefix}Room humidity 2"
+                "name": "{prefix}Room Humidity"
             },
             "raum_feuchte3": {
-                "name": "{prefix}Room humidity 3"
+                "name": "{prefix}Room Humidity"
             },
             "raum_feuchte4": {
-                "name": "{prefix}Room humidity 4"
+                "name": "{prefix}Room Humidity"
             },
             "raum_feuchte5": {
-                "name": "{prefix}Room humidity 5"
+                "name": "{prefix}Room Humidity"
             },
             "raum_soll_temp": {
-                "name": "{prefix}Room setpoint temperature"
+                "name": "{prefix}Room Setpoint Temperature"
             },
             "raum_soll_temp2": {
-                "name": "{prefix}Room setpoint temperature 2"
+                "name": "{prefix}Room Setpoint Temperature"
             },
             "raum_soll_temp3": {
-                "name": "{prefix}Room setpoint temperature 3"
+                "name": "{prefix}Room Setpoint Temperature"
             },
             "raum_soll_temp4": {
-                "name": "{prefix}Room setpoint temperature 4"
+                "name": "{prefix}Room Setpoint Temperature"
             },
             "raum_soll_temp5": {
-                "name": "{prefix}Room setpoint temperature 5"
+                "name": "{prefix}Room Setpoint Temperature"
             },
             "raum_temp": {
-                "name": "{prefix}Room temperature"
+                "name": "{prefix}Room Temperature"
             },
             "raum_temp2": {
-                "name": "{prefix}Room temperature 2"
+                "name": "{prefix}Room Temperature"
             },
             "raum_temp3": {
-                "name": "{prefix}Room temperature 3"
+                "name": "{prefix}Room Temperature"
             },
             "raum_temp4": {
-                "name": "{prefix}Room temperature 4"
+                "name": "{prefix}Room Temperature"
             },
             "raum_temp5": {
-                "name": "{prefix}Room temperature 5"
+                "name": "{prefix}Room Temperature"
             },
             "rl_temp": {
-                "name": "{prefix}Return flow temperature"
+                "name": "{prefix}Return Flow Temperature"
             },
             "ruhemodus": {
-                "name": "{prefix}Silent mode",
+                "name": "{prefix}Silent Mode",
                 "state": {
                     "hp_ruhemodus_0": "off",
                     "hp_ruhemodus_1": "80 %",
@@ -1260,10 +1260,10 @@
                 }
             },
             "schaltsp_e1": {
-                "name": "{prefix}Switching cycles E-heating 1"
+                "name": "{prefix}Switching Cycles E-Heating 1"
             },
             "schaltsp_e2": {
-                "name": "{prefix}Switching cycles E-heating 2"
+                "name": "{prefix}Switching Cycles E-Heating 2"
             },
             "sgr1": {
                 "name": "{prefix}SG-Ready 1"
@@ -1272,28 +1272,28 @@
                 "name": "{prefix}SG-Ready 2"
             },
             "soll_volumenstrom_heizen": {
-                "name": "{prefix}Setpoint volume flow Heating"
+                "name": "{prefix}Setpoint Volume Flow Heating"
             },
             "soll_volumenstrom_kuehlen": {
-                "name": "{prefix}Setpoint volume flow Cooling"
+                "name": "{prefix}Setpoint Volume Flow Cooling"
             },
             "soll_volumenstrom_ww": {
-                "name": "{prefix}Setpoint volume flow Hot water"
+                "name": "{prefix}Setpoint Volume Flow Hot Water"
             },
             "sollwert_pumpe_leistung_abtau": {
-                "name": "{prefix}Setpoint pump power defrost"
+                "name": "{prefix}Setpoint Pump Power Defrost"
             },
             "sollwert_pumpe_leistung_heizen": {
-                "name": "{prefix}Setpoint pump power Heating"
+                "name": "{prefix}Setpoint Pump Power Heating"
             },
             "sollwert_pumpe_leistung_kuehlen": {
-                "name": "{prefix}Setpoint pump power Cooling"
+                "name": "{prefix}Setpoint Pump Power Cooling"
             },
             "sollwert_pumpe_leitung_ww": {
-                "name": "{prefix}Setpoint pump power Hot water"
+                "name": "{prefix}Setpoint Pump Power Hot water"
             },
             "status_2_wez": {
-                "name": "{prefix}Status 2nd heat source",
+                "name": "{prefix}Status",
                 "state": {
                     "w2_status_aus": "off",
                     "w2_status_ein": "on"
@@ -1314,28 +1314,28 @@
                 }
             },
             "verdampfungs_temp": {
-                "name": "{prefix}Evaporation temperature"
+                "name": "{prefix}Evaporation Temperature"
             },
             "verdichter_ansaug_gas_temp": {
-                "name": "{prefix}Compressor suction gas temp"
+                "name": "{prefix}Compressor ´Suction Gas Temp"
             },
             "vl_praeziese_summenvorlauf_b7": {
-                "name": "{prefix}Feed temperature präzise(Summenvorlauf(B7))"
+                "name": "{prefix}Feed Temperature Precise (Cumulative(B7))"
             },
             "vl_temp": {
-                "name": "{prefix}Feed setpoint temperature"
+                "name": "{prefix}Feed Setpoint Temperature"
             },
             "vl_temp2": {
-                "name": "{prefix}Feed setpoint temperature"
+                "name": "{prefix}Feed Setpoint Temperature"
             },
             "vl_temp3": {
-                "name": "{prefix}Feed setpoint temperature"
+                "name": "{prefix}Feed Setpoint Temperature"
             },
             "vl_temp4": {
-                "name": "{prefix}Feed setpoint temperature"
+                "name": "{prefix}Feed Setpoint Temperature"
             },
             "vl_temp5": {
-                "name": "{prefix}Feed setpoint temperature"
+                "name": "{prefix}Feed Setpoint Temperature"
             },
             "w2_konf": {
                 "name": "{prefix}W2_Configuration",
@@ -1487,7 +1487,7 @@
                 }
             },
             "weichen_temp": {
-                "name": "{prefix}Switch temperature"
+                "name": "{prefix}Switch Temperature"
             },
             "wp_betrieb": {
                 "name": "{prefix}Operation",
@@ -1542,23 +1542,23 @@
                 }
             },
             "wp_stoermeldung": {
-                "name": "{prefix}Error message",
+                "name": "{prefix}Error Message",
                 "state": {
                     "hp_stoerung": "error",
                     "hp_stoerungsfrei": "no error"
                 }
             },
             "ww_energie_getern": {
-                "name": "{prefix}Hot water energy yesterday"
+                "name": "{prefix}Hot Water Energy Yesterday"
             },
             "ww_energie_heute": {
-                "name": "{prefix}Hot water energy today"
+                "name": "{prefix}Hot Water Energy Today"
             },
             "ww_energie_jahr": {
-                "name": "{prefix}Hot water energy year"
+                "name": "{prefix}Hot Water Energy Year"
             },
             "ww_energie_monat": {
-                "name": "{prefix}Hot water energy month"
+                "name": "{prefix}Hot Water Energy Month"
             },
             "ww_konf": {
                 "name": "{prefix}Configuration",
@@ -1569,10 +1569,10 @@
                 }
             },
             "ww_soll_temp": {
-                "name": "{prefix}setpoint temperature"
+                "name": "{prefix}Setpoint Temperature"
             },
             "ww_temp": {
-                "name": "{prefix}temperature"
+                "name": "{prefix}Temperature"
             }
         }
     },
