@@ -10,7 +10,8 @@ from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-
+from homeassistant.util import slugify
+from homeassistant.helpers import entity_registry as er
 
 from .const import (
     CONF_DEVICE_POSTFIX,
@@ -25,6 +26,7 @@ from .const import (
     DEVICES,
     FORMATS,
     TYPES,
+    name_list,
 )
 from .coordinator import MyCoordinator
 from .hpconst import reverse_device_list
@@ -32,6 +34,7 @@ from .items import ModbusItem
 from .kennfeld import PowerMap
 from .modbusobject import ModbusAPI, ModbusObject
 from .configentry import MyConfigEntry
+from .migrate_helpers import create_unique_id
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -150,6 +153,7 @@ class MyEntity(Entity):
     _attr_has_entity_name = True
     _dev_device = ""
     _modbus_api = None
+    # _converted = False
 
     def __init__(
         self,
@@ -172,7 +176,7 @@ class MyEntity(Entity):
         #    dev_prefix = CONST.DEF_PREFIX
 
         if self._config_entry.data[CONF_NAME_DEVICE_PREFIX]:
-            name_device_prefix = self._config_entry.data[CONF_PREFIX] + "_"
+            name_device_prefix = dev_prefix + "_"
         else:
             name_device_prefix = ""
 
@@ -187,8 +191,9 @@ class MyEntity(Entity):
         self._attr_translation_placeholders = {"prefix": name_prefix}
         self._dev_translation_placeholders = {"postfix": dev_postfix}
 
-        self._attr_unique_id = dev_prefix + self._modbus_item.name + dev_postfix
+        self._attr_unique_id = create_unique_id(self._config_entry, self._modbus_item)
         self._dev_device = self._modbus_item.device
+
         self._modbus_api = modbus_api
 
         if self._modbus_item._format != FORMATS.STATUS:
@@ -264,6 +269,7 @@ class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
     _attr_native_unit_of_measurement = None
     _attr_device_class = None
     _attr_state_class = None
+    _renamed = False
 
     def __init__(
         self,
@@ -275,9 +281,6 @@ class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
         super().__init__(coordinator, context=idx)
         self.idx = idx
         MyEntity.__init__(self, config_entry, modbus_item, coordinator._modbus_api)
-        if config_entry.data[CONF_NAME_OLD_NAMESTYLE]:
-            self._attr_has_entity_name = False
-            self._attr_name = self._substitute_name_placeholders(self._modbus_item.name)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -310,9 +313,6 @@ class MyCalcSensorEntity(MySensorEntity):
         pwrmap: PowerMap,
     ) -> None:
         MySensorEntity.__init__(self, config_entry, modbus_item, coordinator, idx)
-        if config_entry.data[CONF_NAME_OLD_NAMESTYLE]:
-            self._attr_has_entity_name = False
-            self._attr_name = self._substitute_name_placeholders(self._modbus_item.name)
         self.my_map = pwrmap
 
     @callback
@@ -376,9 +376,6 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
         super().__init__(coordinator, context=idx)
         self._idx = idx
         MyEntity.__init__(self, config_entry, modbus_item, coordinator._modbus_api)
-        if config_entry.data[CONF_NAME_OLD_NAMESTYLE]:
-            self._attr_has_entity_name = False
-            self._attr_name = self._substitute_name_placeholders(self._modbus_item.name)
 
         if self._modbus_item.resultlist is not None:
             self._attr_native_min_value = self._modbus_item.get_number_from_text("min")
@@ -422,9 +419,6 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         super().__init__(coordinator, context=idx)
         self._idx = idx
         MyEntity.__init__(self, config_entry, modbus_item, coordinator._modbus_api)
-        if config_entry.data[CONF_NAME_OLD_NAMESTYLE]:
-            self._attr_has_entity_name = False
-            self._attr_name = self._substitute_name_placeholders(self._modbus_item.name)
 
         self.async_internal_will_remove_from_hass_port = self._config_entry.data[
             CONF_PORT
