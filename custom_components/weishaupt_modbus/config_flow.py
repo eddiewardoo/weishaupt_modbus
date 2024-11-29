@@ -101,7 +101,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                 vol.Optional(CONF_PORT, default="502"): cv.port,
                 vol.Optional(CONF_PREFIX, default=CONST.DEF_PREFIX): str,
                 vol.Optional(CONF_DEVICE_POSTFIX, default=""): str,
-                #        vol.Optional(CONF_KENNFELD_FILE, default=CONST.DEF_KENNFELDFILE): str,
                 vol.Optional(
                     CONF_KENNFELD_FILE, default="weishaupt_wbb_kennfeld.json"
                 ): vol.In(await build_kennfeld_list(self.hass)),
@@ -156,7 +155,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                     CONF_DEVICE_POSTFIX,
                     default=reconfigure_entry.data[CONF_DEVICE_POSTFIX],
                 ): str,
-                # vol.Optional(CONF_KENNFELD_FILE, default=CONST.DEF_KENNFELDFILE): str,
                 vol.Optional(
                     CONF_KENNFELD_FILE,
                     default=reconfigure_entry.data[CONF_KENNFELD_FILE],

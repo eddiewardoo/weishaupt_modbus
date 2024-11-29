@@ -21,12 +21,10 @@ from .const import (
     CONF_HK5,
     CONF_NAME_DEVICE_PREFIX,
     CONF_NAME_TOPIC_PREFIX,
-    CONF_NAME_OLD_NAMESTYLE,
     CONST,
     DEVICES,
     FORMATS,
     TYPES,
-    name_list,
 )
 from .coordinator import MyCoordinator
 from .hpconst import reverse_device_list
@@ -153,7 +151,6 @@ class MyEntity(Entity):
     _attr_has_entity_name = True
     _dev_device = ""
     _modbus_api = None
-    # _converted = False
 
     def __init__(
         self,
@@ -170,10 +167,7 @@ class MyEntity(Entity):
         if dev_postfix == "_":
             dev_postfix = ""
 
-        # if config_entry.data[CONF_NAME_OLD_NAMESTYLE]:
         dev_prefix = self._config_entry.data[CONF_PREFIX]
-        # else:
-        #    dev_prefix = CONST.DEF_PREFIX
 
         if self._config_entry.data[CONF_NAME_DEVICE_PREFIX]:
             name_device_prefix = dev_prefix + "_"

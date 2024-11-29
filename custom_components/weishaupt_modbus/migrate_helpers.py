@@ -58,7 +58,7 @@ def create_new_entity_id(
     else:
         name_topic_prefix = ""
 
-    entity_name = name_topic_prefix + name_device_prefix + modbus_item.translation_key
+    entity_name = name_topic_prefix + name_device_prefix + modbus_item.name
 
     return str(platform + "." + slugify(device_name + "_" + entity_name))
 

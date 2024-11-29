@@ -24,7 +24,8 @@ from .modbusobject import ModbusObject, ModbusAPI
 from .configentry import MyConfigEntry
 
 logging.basicConfig()
-_LOGGER = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
+
 
 class MyCoordinator(DataUpdateCoordinator):
     """My custom coordinator."""
@@ -39,7 +40,7 @@ class MyCoordinator(DataUpdateCoordinator):
         """Initialize my coordinator."""
         super().__init__(
             hass,
-            _LOGGER,
+            log,
             # Name of the data. For logging purposes.
             name="weishaupt-coordinator",
             # Polling interval. Will only be polled if there are subscribers.
