@@ -233,7 +233,7 @@ class ModbusObject:
                     # Sensor entities are read-only
                     return
                 case _:
-                    if self._modbusitem.format == FORMATS.TEMPERATUR:
+                    if self._modbus_item.format == FORMATS.TEMPERATUR:
                         if value < 0:
                             value=value+65536
                     await self._modbus_client.write_register(
