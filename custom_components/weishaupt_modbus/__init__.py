@@ -1,78 +1,5 @@
 """init."""
 
-# https://github.com/mvdwetering/yamaha_ynca/blob/d3fa53a07bf3b04903aced4ff90d7ec2e07b8a83/custom_components/yamaha_ynca/migrations.py#L142
-# def migrate_v2_to_v3(hass: HomeAssistant, config_entry: ConfigEntry):
-#    # Scene entities are replaced by Button entities
-#    # (scenes limited to a single devics seem a bit weird)
-#    # cleanup the scene entities so the user does not have to
-#    registry = entity_registry.async_get(hass)
-#    entities = entity_registry.async_entries_for_config_entry(
-#        registry, config_entry.entry_id
-#    )
-#    for entity in entities:
-#        if entity.domain == Platform.SCENE:
-#            registry.async_remove(entity.entity_id)
-#
-#    config_entry.version = 3
-#    hass.config_entries.async_update_entry(config_entry, data=config_entry.data)
-
-
-# https://community.home-assistant.io/t/config-flow-how-to-update-an-existing-entity/522442/4
-
-
-# async def async_setup_entry(
-#    hass: HomeAssistant, config_entry: AcmedaConfigEntry
-# ) -> bool:
-#    """Set up Rollease Acmeda Automate hub from a config entry."""
-#    await _migrate_unique_ids(hass, config_entry)
-
-# async def _migrate_unique_ids(hass: HomeAssistant, entry: AcmedaConfigEntry) -> None:
-#    """Migrate pre-config flow unique ids."""
-#    entity_registry = er.async_get(hass)
-#    registry_entries = er.async_entries_for_config_entry(
-#        entity_registry, entry.entry_id
-#    )
-#    for reg_entry in registry_entries:
-#        if isinstance(reg_entry.unique_id, int):  # type: ignore[unreachable]
-#            entity_registry.async_update_entity(  # type: ignore[unreachable]
-#                reg_entry.entity_id, new_unique_id=str(reg_entry.unique_id)
-#            )
-
-#    # Fix non-string unique_id for device trackers
-#    # Can be removed in 2025.1
-#    entity_registry = er.async_get(hass)
-#    for device_key in tado.data["mobile_device"]:
-#        if entity_id := entity_registry.async_get_entity_id(
-#            DEVICE_TRACKER_DOMAIN, DOMAIN, device_key
-#        ):
-#            entity_registry.async_update_entity(
-#                entity_id, new_unique_id=str(device_key)
-#            )
-
-
-# https://github.com/home-assistant/core/blob/f41bc98fe2dad97e3008a6f5d955808900800d90/homeassistant/components/tibber/sensor.py#L314
-# async def async_setup_entry(
-#        # migrate
-#        old_id = home.info["viewer"]["home"]["meteringPointData"]["consumptionEan"]
-#        if old_id is None:
-#            continue
-#        # migrate to new device ids
-#        old_entity_id = entity_registry.async_get_entity_id(
-#            "sensor", TIBBER_DOMAIN, old_id
-#        )
-#        if old_entity_id is not None:
-#            entity_registry.async_update_entity(
-#                old_entity_id, new_unique_id=home.home_id
-#            )
-#        # migrate to new device ids
-#        device_entry = device_registry.async_get_device(
-#            identifiers={(TIBBER_DOMAIN, old_id)}
-#        )
-#        if device_entry and entry.entry_id in device_entry.config_entries:
-#            device_registry.async_update_device(
-#                device_entry.id, new_identifiers={(TIBBER_DOMAIN, home.home_id)}
-#            )
-
 import json
 import logging
 
@@ -111,6 +38,7 @@ from .items import ModbusItem, StatusItem
 from .modbusobject import ModbusAPI
 from .configentry import MyConfigEntry, MyData
 from .migrate_helpers import migrate_entities
+from .const import DEVICENAMES
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -134,17 +62,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     await mbapi.connect()
     entry.runtime_data = MyData(mbapi, hass.config.config_dir, hass)
 
-    migrate_entities(entry, MODBUS_SYS_ITEMS)
-    migrate_entities(entry, MODBUS_HZ_ITEMS)
-    migrate_entities(entry, MODBUS_HZ2_ITEMS)
-    migrate_entities(entry, MODBUS_HZ3_ITEMS)
-    migrate_entities(entry, MODBUS_HZ4_ITEMS)
-    migrate_entities(entry, MODBUS_HZ5_ITEMS)
-    migrate_entities(entry, MODBUS_WP_ITEMS)
-    migrate_entities(entry, MODBUS_WW_ITEMS)
-    migrate_entities(entry, MODBUS_W2_ITEMS)
-    migrate_entities(entry, MODBUS_IO_ITEMS)
-    migrate_entities(entry, MODBUS_ST_ITEMS)
+    migrate_entities(entry, MODBUS_SYS_ITEMS, DEVICENAMES.SYS)
+    migrate_entities(entry, MODBUS_HZ_ITEMS, DEVICENAMES.HZ)
+    migrate_entities(entry, MODBUS_HZ2_ITEMS, DEVICENAMES.HZ2)
+    migrate_entities(entry, MODBUS_HZ3_ITEMS, DEVICENAMES.HZ3)
+    migrate_entities(entry, MODBUS_HZ4_ITEMS, DEVICENAMES.HZ4)
+    migrate_entities(entry, MODBUS_HZ5_ITEMS, DEVICENAMES.HZ5)
+    migrate_entities(entry, MODBUS_WP_ITEMS, DEVICENAMES.WP)
+    migrate_entities(entry, MODBUS_WW_ITEMS, DEVICENAMES.WW)
+    migrate_entities(entry, MODBUS_W2_ITEMS, DEVICENAMES.W2)
+    migrate_entities(entry, MODBUS_IO_ITEMS, DEVICENAMES.IO)
+    migrate_entities(entry, MODBUS_ST_ITEMS, DEVICENAMES.ST)
 
     # see https://community.home-assistant.io/t/config-flow-how-to-update-an-existing-entity/522442/8
     entry.async_on_unload(entry.add_update_listener(update_listener))
@@ -220,7 +148,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         try:
             hass.data[entry.data[CONF_PREFIX]].pop(entry.entry_id)
         except KeyError:
-            log.warning("KeyError: " + str(entry.data[CONF_PREFIX]))
+            log.warning("KeyError: %s", str(entry.data[CONF_PREFIX]))
 
     return unload_ok
 

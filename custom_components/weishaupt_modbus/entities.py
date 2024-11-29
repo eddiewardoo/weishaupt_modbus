@@ -10,8 +10,6 @@ from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.util import slugify
-from homeassistant.helpers import entity_registry as er
 
 from .const import (
     CONF_DEVICE_POSTFIX,
@@ -26,6 +24,7 @@ from .const import (
     FORMATS,
     TYPES,
 )
+
 from .coordinator import MyCoordinator
 from .hpconst import reverse_device_list
 from .items import ModbusItem

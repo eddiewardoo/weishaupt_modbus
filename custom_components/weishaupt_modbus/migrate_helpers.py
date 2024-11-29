@@ -39,14 +39,15 @@ def create_old_id(config_entry: MyConfigEntry, modbus_item: ModbusItem):
 
 
 def create_new_entity_id(
-    config_entry: MyConfigEntry, modbus_item: ModbusItem, platform: str
+    config_entry: MyConfigEntry, modbus_item: ModbusItem, platform: str, device: str
 ):
     """created an entity ID according to new style"""
     dev_postfix = "_" + config_entry.data[CONF_DEVICE_POSTFIX]
     if dev_postfix == "_":
         dev_postfix = ""
 
-    device_name = modbus_item.device + dev_postfix
+    # device_name = modbus_item.device + dev_postfix
+    device_name = device + dev_postfix
 
     if config_entry.data[CONF_NAME_DEVICE_PREFIX]:
         name_device_prefix = CONST.DEF_PREFIX + "_"
@@ -73,10 +74,7 @@ def create_unique_id(config_entry: MyConfigEntry, modbus_item: ModbusItem):
     return str(config_entry.data[CONF_PREFIX] + modbus_item.name + dev_postfix)
 
 
-def migrate_entities(
-    config_entry: MyConfigEntry,
-    modbusitems: ModbusItem,
-):
+def migrate_entities(config_entry: MyConfigEntry, modbusitems: ModbusItem, device: str):
     """Build entity list.
 
     function builds a list of entities that can be used as parameter by async_setup_entry()
@@ -100,7 +98,7 @@ def migrate_entities(
 
         old_id = create_old_id(config_entry, item)
         old_uid = create_unique_id(config_entry, item)
-        new_entity_id = create_new_entity_id(config_entry, item, platform)
+        new_entity_id = create_new_entity_id(config_entry, item, platform, device)
         old_entity_id = entity_registry.async_get_entity_id(
             platform, CONST.DOMAIN, old_uid
         )

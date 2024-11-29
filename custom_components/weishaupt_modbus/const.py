@@ -89,18 +89,27 @@ class DeviceConstants:
     ST = "dev_statistik"
     UK = "dev_unknown"
     IO = "dev_ein_aus"
-    # SYS = "System"
-    # WP = "Wärmepumpe"
-    # WW = "Warmwasser"
-    # HZ = "Heizkreis"
-    # HZ2 = "Heizkreis2"
-    # HZ3 = "Heizkreis3"
-    # HZ4 = "Heizkreis4"
-    # HZ5 = "Heizkreis5"
-    # W2 = "2. Wärmeerzeuger"
-    # ST = "Statistik"
-    # UK = "Unknown"
-    # IO = "Eingänge/Ausgänge"
 
 
 DEVICES = DeviceConstants()
+
+
+@dataclass(frozen=True)
+class DeviceNameConstants:
+    """Device constants."""
+
+    SYS = "System"
+    WP = "Wärmepumpe"
+    WW = "Warmwasser"
+    HZ = "Heizkreis"
+    HZ2 = "Heizkreis2"
+    HZ3 = "Heizkreis3"
+    HZ4 = "Heizkreis4"
+    HZ5 = "Heizkreis5"
+    W2 = "2. Wärmeerzeuger"
+    ST = "Statistik"
+    UK = "Unknown"
+    IO = "Eingänge/Ausgänge"
+
+
+DEVICENAMES = DeviceNameConstants()
