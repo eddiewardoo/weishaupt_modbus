@@ -95,7 +95,7 @@ class ModbusObject:
                 return self.check_status(val)
             case _:
                 self._modbus_item.is_invalid = False
-                return None
+                return val
 
     def check_temperature(self, val) -> int:
         """Check availability of temperature item and translate 
