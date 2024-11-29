@@ -98,18 +98,18 @@ DEVICES = DeviceConstants()
 class DeviceNameConstants:
     """Device constants."""
 
-    SYS = "System"
-    WP = "Wärmepumpe"
-    WW = "Warmwasser"
-    HZ = "Heizkreis"
-    HZ2 = "Heizkreis2"
-    HZ3 = "Heizkreis3"
-    HZ4 = "Heizkreis4"
-    HZ5 = "Heizkreis5"
-    W2 = "2. Wärmeerzeuger"
-    ST = "Statistik"
-    UK = "Unknown"
-    IO = "Eingänge/Ausgänge"
+    SYS = "WH System"
+    WP = "WH Wärmepumpe"
+    WW = "WH Warmwasser"
+    HZ = "WH Heizkreis"
+    HZ2 = "WH Heizkreis2"
+    HZ3 = "WH Heizkreis3"
+    HZ4 = "WH Heizkreis4"
+    HZ5 = "WH Heizkreis5"
+    W2 = "WH 2. Wärmeerzeuger"
+    ST = "WH Statistik"
+    UK = "WH Unknown"
+    IO = "WH Eingänge/Ausgänge"
 
 
 DEVICENAMES = DeviceNameConstants()
