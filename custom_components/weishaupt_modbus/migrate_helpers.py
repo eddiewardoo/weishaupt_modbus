@@ -108,16 +108,27 @@ def migrate_entities(config_entry: MyConfigEntry, modbusitems: ModbusItem, devic
             return
 
         if old_entity_id is not None:
-            entity_registry.async_update_entity(
-                old_entity_id,
-                new_entity_id=new_entity_id,
-            )
+            try:
+                entity_registry.async_update_entity(
+                    old_entity_id,
+                    new_entity_id=new_entity_id,
+                )
 
-            log.info(
-                "Init UID:%s, platform:%s old ID:%s --> %s new ID:%s",
-                old_uid,
-                platform,
-                old_id,
-                old_entity_id,
-                new_entity_id,
-            )
+                log.info(
+                    "Init UID:%s, platform:%s old ID:%s --> %s new ID:%s",
+                    old_uid,
+                    platform,
+                    old_id,
+                    old_entity_id,
+                    new_entity_id,
+                )
+            except:
+                log.warning(
+                    "Already existing UID:%s, platform:%s old ID:%s --> %s new ID:%s",
+                    old_uid,
+                    platform,
+                    old_id,
+                    old_entity_id,
+                    new_entity_id,
+                )
+                
