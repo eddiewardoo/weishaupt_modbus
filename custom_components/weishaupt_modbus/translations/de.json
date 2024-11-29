@@ -28,40 +28,40 @@
     },
     "device": {
         "dev_system": {
-            "name": "WP System{postfix}"
+            "name": "System{postfix}"
         },
         "dev_waermepumpe": {
-            "name": "WP Wärmepumpe{postfix}"
+            "name": "Wärmepumpe{postfix}"
         },
         "dev_warmwasser": {
-            "name": "WP Warmwasser{postfix}"
+            "name": "Warmwasser{postfix}"
         },
         "dev_heizkreis": {
-            "name": "WP Heizkreis{postfix}"
+            "name": "Heizkreis{postfix}"
         },
         "dev_heizkreis2": {
-            "name": "WP Heizkreis2{postfix}"
+            "name": "Heizkreis2{postfix}"
         },
         "dev_heizkreis3": {
-            "name": "WP Heizkreis3{postfix}"
+            "name": "Heizkreis3{postfix}"
         },
         "dev_heizkreis4": {
-            "name": "WP Heizkreis4{postfix}"
+            "name": "Heizkreis4{postfix}"
         },
         "dev_heizkreis5": {
-            "name": "WP Heizkreis5{postfix}"
+            "name": "Heizkreis5{postfix}"
         },
         "dev_waermeerzeuger2": {
-            "name": "WP 2. Wärmeerzeuger{postfix}"
+            "name": "2. Wärmeerzeuger{postfix}"
         },
         "dev_statistik": {
-            "name": "WP Statistik{postfix}"
+            "name": "Statistik{postfix}"
         },
         "dev_unknown": {
-            "name": "WP Unknown{postfix}"
+            "name": "Unknown{postfix}"
         },
         "dev_ein_aus": {
-            "name": "WP Eingänge/Ausgänge{postfix}"
+            "name": "Eingänge/Ausgänge{postfix}"
         }
     },
     "entity": {
