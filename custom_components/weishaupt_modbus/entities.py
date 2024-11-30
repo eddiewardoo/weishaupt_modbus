@@ -29,9 +29,8 @@ from .coordinator import MyCoordinator, MyWebIfCoordinator
 from .hpconst import reverse_device_list
 from .items import ModbusItem, WebItem
 from .kennfeld import PowerMap
-from .modbusobject import ModbusAPI, ModbusObject
-from .configentry import MyConfigEntry
 from .migrate_helpers import create_unique_id
+from .modbusobject import ModbusAPI, ModbusObject
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -183,13 +182,13 @@ class MyEntity(Entity):
         name_prefix = name_topic_prefix + name_device_prefix
 
         self._dev_device = self._api_item.device + dev_postfix
-        
+
         self._attr_translation_key = self._api_item.translation_key
         self._attr_translation_placeholders = {"prefix": name_prefix}
         self._dev_translation_placeholders = {"postfix": dev_postfix}
 
         self._attr_unique_id = create_unique_id(self._config_entry, self._api_item)
-        self._dev_device = self._modbus_item.device
+        self._dev_device = self._api_item.device
 
         self._modbus_api = modbus_api
 
@@ -218,8 +217,8 @@ class MyEntity(Entity):
 
     def translate_val(self, val) -> float:
         """Translate modbus value into sensful format."""
-        if self._modbus_item.format == FORMATS.STATUS:
-            return self._modbus_item.get_translation_key_from_number(val)
+        if self._api_item.format == FORMATS.STATUS:
+            return self._api_item.get_translation_key_from_number(val)
         else:
             if val is None:
                 return None
@@ -227,8 +226,8 @@ class MyEntity(Entity):
 
     def retranslate_val(self, value) -> int:
         """Re-translate modbus value into sensful format."""
-        if self._modbus_item.format == FORMATS.STATUS:
-            return self._modbus_item.get_number_from_translation_key(value)
+        if self._api_item.format == FORMATS.STATUS:
+            return self._api_item.get_number_from_translation_key(value)
         else:
             return int(value * self._divider)
 
@@ -418,7 +417,7 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         """Initialze MySelectEntity."""
         super().__init__(coordinator, context=idx)
         self._idx = idx
-        MyEntity.__init__(self, config_entry, modbus_item, coordinator_.modbus_api)
+        MyEntity.__init__(self, config_entry, modbus_item, coordinator.modbus_api)
         self.async_internal_will_remove_from_hass_port = self._config_entry.data[
             CONF_PORT
         ]

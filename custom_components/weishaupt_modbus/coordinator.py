@@ -3,7 +3,6 @@
 import asyncio
 from datetime import timedelta
 import logging
-import warnings
 
 from pymodbus import ModbusException
 
@@ -15,7 +14,6 @@ from .const import CONF_HK2, CONF_HK3, CONF_HK4, CONF_HK5, CONST, FORMATS, TYPES
 from .hpconst import DEVICES, PARAMS_STDTEMP
 from .items import ModbusItem
 from .modbusobject import ModbusAPI, ModbusObject
-from .webif_object import WebifConnection
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -121,32 +119,35 @@ class MyCoordinator(DataUpdateCoordinator):
                     case TYPES.SENSOR_CALC:
                         r1 = await self.get_value_a(item)
                         item_x = ModbusItem(
-                            item.params["x"],
-                            "x",
-                            FORMATS.TEMPERATUR,
-                            TYPES.SENSOR_CALC,
-                            DEVICES.SYS,
+                            address=item.params["x"],
+                            name="x",
+                            mformat=FORMATS.TEMPERATUR,
+                            mtype=TYPES.SENSOR_CALC,
+                            device=DEVICES.SYS,
                             params=PARAMS_STDTEMP,
+                            translation_key="calc_sensor",
                         )
                         r2 = await self.get_value(item_x)
                         if r2 is None:
                             # use Aussentemperatur if Luftansaugtemperatur not available
                             item_x = ModbusItem(
-                                item.params["x2"],
-                                "x2",
-                                FORMATS.TEMPERATUR,
-                                TYPES.SENSOR_CALC,
-                                DEVICES.SYS,
+                                address=item.params["x2"],
+                                name="x2",
+                                mformat=FORMATS.TEMPERATUR,
+                                mtype=TYPES.SENSOR_CALC,
+                                device=DEVICES.SYS,
                                 params=PARAMS_STDTEMP,
+                                translation_key="calc_sensor",
                             )
                             r2 = await self.get_value(item_x)
                         item_y = ModbusItem(
-                            item.params["y"],
-                            "y",
-                            FORMATS.TEMPERATUR,
-                            TYPES.SENSOR_CALC,
-                            DEVICES.WP,
+                            address=item.params["y"],
+                            name="y",
+                            mformat=FORMATS.TEMPERATUR,
+                            mtype=TYPES.SENSOR_CALC,
+                            device=DEVICES.WP,
                             params=PARAMS_STDTEMP,
+                            translation_key="calc_sensor",
                         )
                         r3 = await self.get_value(item_y)
 
@@ -183,7 +184,7 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
         """Initialize my coordinator."""
         super().__init__(
             hass=hass,
-            logger=_LOGGER,
+            logger=log,
             # Name of the data. For logging purposes.
             name="My sensor",
             # Polling interval. Will only be polled if there are subscribers.
