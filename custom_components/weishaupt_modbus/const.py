@@ -21,6 +21,8 @@ CONF_HK5 = "Heizkreis 5"
 CONF_NAME_DEVICE_PREFIX = "Name-Device-Prefix"
 CONF_NAME_TOPIC_PREFIX = "Name-Topic-Prefix"
 
+name_list = []
+
 
 @dataclass(frozen=True)
 class MainConstants:
@@ -75,32 +77,41 @@ TYPES = TypeConstants()
 class DeviceConstants:
     """Device constants."""
 
-    # SYS = "dev_system"
-    # WP = "dev_waermepumpe"
-    # WW = "dev_warmwasser"
-    # HZ = "dev_heizkreis"
-    # HZ2 = "dev_heizkreis2"
-    # HZ3 = "dev_heizkreis3"
-    # HZ4 = "dev_heizkreis4"
-    # HZ5 = "dev_heizkreis5"
-    # W2 = "dev_waermeerzeuger2"
-    # ST = "dev_statistik"
-    # UK = "dev_unknown"
-    # IO = "dev_ein_aus"
-    SYS = "System"
-    WP = "Wärmepumpe"
-    WW = "Warmwasser"
-    HZ = "Heizkreis"
-    HZ2 = "Heizkreis2"
-    HZ3 = "Heizkreis3"
-    HZ4 = "Heizkreis4"
-    HZ5 = "Heizkreis5"
-    W2 = "2. Wärmeerzeuger"
-    ST = "Statistik"
-    UK = "Unknown"
-    IO = "Eingänge/Ausgänge"
+    SYS = "dev_system"
+    WP = "dev_waermepumpe"
+    WW = "dev_warmwasser"
+    HZ = "dev_heizkreis"
+    HZ2 = "dev_heizkreis2"
+    HZ3 = "dev_heizkreis3"
+    HZ4 = "dev_heizkreis4"
+    HZ5 = "dev_heizkreis5"
+    W2 = "dev_waermeerzeuger2"
+    ST = "dev_statistik"
+    UK = "dev_unknown"
+    IO = "dev_ein_aus"
 
     WIH = "Webif Info Heizkreis"
 
 
 DEVICES = DeviceConstants()
+
+
+@dataclass(frozen=True)
+class DeviceNameConstants:
+    """Device constants."""
+
+    SYS = "WH System"
+    WP = "WH Wärmepumpe"
+    WW = "WH Warmwasser"
+    HZ = "WH Heizkreis"
+    HZ2 = "WH Heizkreis2"
+    HZ3 = "WH Heizkreis3"
+    HZ4 = "WH Heizkreis4"
+    HZ5 = "WH Heizkreis5"
+    W2 = "WH 2. Wärmeerzeuger"
+    ST = "WH Statistik"
+    UK = "WH Unknown"
+    IO = "WH Eingänge/Ausgänge"
+
+
+DEVICENAMES = DeviceNameConstants()

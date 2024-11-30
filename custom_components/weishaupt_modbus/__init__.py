@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-import warnings
+import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_PREFIX, CONF_USERNAME
@@ -22,10 +22,29 @@ from .const import (
     FORMATS,
     TYPES,
 )
-from .hpconst import DEVICELISTS
+from .hpconst import (
+    DEVICELISTS,
+    MODBUS_HZ_ITEMS,
+    MODBUS_SYS_ITEMS,
+    MODBUS_ST_ITEMS,
+    MODBUS_WP_ITEMS,
+    MODBUS_WW_ITEMS,
+    MODBUS_W2_ITEMS,
+    MODBUS_IO_ITEMS,
+    MODBUS_HZ2_ITEMS,
+    MODBUS_HZ3_ITEMS,
+    MODBUS_HZ4_ITEMS,
+    MODBUS_HZ5_ITEMS,
+)
 from .items import ModbusItem, StatusItem
 from .modbusobject import ModbusAPI
 from .webif_object import WebifConnection
+from .configentry import MyConfigEntry, MyData
+from .migrate_helpers import migrate_entities
+from .const import DEVICENAMES
+
+logging.basicConfig()
+log = logging.getLogger(__name__)
 
 PLATFORMS: list[str] = [
     "number",
@@ -59,13 +78,38 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     # await myWebifCon.close()
     # print(myWebifCon._session.closed)
 
+    hass.add_job(migrate_entities, entry, MODBUS_SYS_ITEMS, DEVICENAMES.SYS)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ_ITEMS, DEVICENAMES.HZ)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ2_ITEMS, DEVICENAMES.HZ2)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ3_ITEMS, DEVICENAMES.HZ3)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ4_ITEMS, DEVICENAMES.HZ4)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ5_ITEMS, DEVICENAMES.HZ5)
+    hass.add_job(migrate_entities, entry, MODBUS_WP_ITEMS, DEVICENAMES.WP)
+    hass.add_job(migrate_entities, entry, MODBUS_WW_ITEMS, DEVICENAMES.WW)
+    hass.add_job(migrate_entities, entry, MODBUS_W2_ITEMS, DEVICENAMES.W2)
+    hass.add_job(migrate_entities, entry, MODBUS_IO_ITEMS, DEVICENAMES.IO)
+    hass.add_job(migrate_entities, entry, MODBUS_ST_ITEMS, DEVICENAMES.ST)
+
+    # see https://community.home-assistant.io/t/config-flow-how-to-update-an-existing-entity/522442/8
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+
     # This is used to generate a strings.json file from hpconst.py
     # create_string_json()
 
     # This creates each HA object for each platform your device requires.
     # It's done by calling the `async_setup_entry` function in each platform module.
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    log.info("Init done")
+
     return True
+
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Update listener."""
+    await hass.config_entries.async_reload(
+        entry.entry_id
+    )  # list of entry_ids created for file
 
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: MyConfigEntry):
@@ -75,25 +119,25 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: MyConfigEntry):
 
     if config_entry.version > 3:
         # This means the user has downgraded from a future version
-        return False
+        return True
 
     # to ensure all update paths we have to check every version to not overwrite existing entries
     if config_entry.version < 4:
-        warnings.warn("Old Version detected")
+        log.warning("Old Version detected")
 
     if config_entry.version < 2:
-        warnings.warn("Version <2 detected")
+        log.warning("Version <2 detected")
         new_data[CONF_PREFIX] = CONST.DEF_PREFIX
         new_data[CONF_DEVICE_POSTFIX] = ""
         new_data[CONF_KENNFELD_FILE] = CONST.DEF_KENNFELDFILE
     if config_entry.version < 3:
-        warnings.warn("Version <3 detected")
+        log.warning("Version <3 detected")
         new_data[CONF_HK2] = False
         new_data[CONF_HK3] = False
         new_data[CONF_HK4] = False
         new_data[CONF_HK5] = False
     if config_entry.version < 4:
-        warnings.warn("Version <4 detected")
+        log.warning("Version <4 detected")
         new_data[CONF_NAME_DEVICE_PREFIX] = False
         new_data[CONF_NAME_TOPIC_PREFIX] = False
 
@@ -103,8 +147,11 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: MyConfigEntry):
         hass.config_entries.async_update_entry(
             config_entry, data=new_data, minor_version=1, version=5
         )
-        warnings.warn("Config entries updated to version 4")
+        log.warning("Config entries updated to version 4")
 
+    hass.config_entries.async_update_entry(
+        config_entry, data=new_data, minor_version=1, version=6
+    )
     return True
 
 
@@ -117,9 +164,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         try:
-            hass.data[CONST.DOMAIN].pop(entry.entry_id)
+            hass.data[entry.data[CONF_PREFIX]].pop(entry.entry_id)
         except KeyError:
-            warnings.warn("KeyError: " + str(CONST.DOMAIN))
+            log.warning("KeyError: %s", str(entry.data[CONF_PREFIX]))
 
     return unload_ok
 

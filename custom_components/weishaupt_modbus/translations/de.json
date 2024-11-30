@@ -28,40 +28,40 @@
     },
     "device": {
         "dev_system": {
-            "name": "System"
+            "name": "WH System{postfix}"
         },
         "dev_waermepumpe": {
-            "name": "Wärmepumpe"
+            "name": "WH Wärmepumpe{postfix}"
         },
         "dev_warmwasser": {
-            "name": "Warmwasser"
+            "name": "WH Warmwasser{postfix}"
         },
         "dev_heizkreis": {
-            "name": "Heizkreis"
+            "name": "WH Heizkreis{postfix}"
         },
         "dev_heizkreis2": {
-            "name": "Heizkreis2"
+            "name": "WH Heizkreis2{postfix}"
         },
         "dev_heizkreis3": {
-            "name": "Heizkreis3"
+            "name": "WH Heizkreis3{postfix}"
         },
         "dev_heizkreis4": {
-            "name": "Heizkreis4"
+            "name": "WH Heizkreis4{postfix}"
         },
         "dev_heizkreis5": {
-            "name": "Heizkreis5"
+            "name": "WH Heizkreis5{postfix}"
         },
         "dev_waermeerzeuger2": {
-            "name": "2. Wärmeerzeuger"
+            "name": "WH 2. Wärmeerzeuger{postfix}"
         },
         "dev_statistik": {
-            "name": "Statistik"
+            "name": "WH Statistik{postfix}"
         },
         "dev_unknown": {
-            "name": "Unknown"
+            "name": "WH Unknown{postfix}"
         },
         "dev_ein_aus": {
-            "name": "Eingänge/Ausgänge"
+            "name": "WH Eingänge/Ausgänge{postfix}"
         }
     },
     "entity": {

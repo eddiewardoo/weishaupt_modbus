@@ -1,10 +1,9 @@
 """Config flow."""
 
 from typing import Any
-
 from aiofiles.os import scandir
 import voluptuous as vol
-
+from aiofiles.os import scandir
 from homeassistant import config_entries, exceptions
 from homeassistant.const import (
     CONF_HOST,
@@ -15,6 +14,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.const import CONF_HOST, CONF_PORT, CONF_PREFIX
 import homeassistant.helpers.config_validation as cv
 
 from .const import (
@@ -88,7 +88,7 @@ async def validate_input(data: dict) -> dict[str, Any]:
 class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
     """Class config flow."""
 
-    VERSION = 4
+    VERSION = 4  # 6
     # Pick one of the available connection classes in homeassistant/config_entries.py
     # This tells HA if it should be asking for updates, or it'll be notified of updates
     # automatically. This example uses PUSH, as the dummy hub will notify HA of
@@ -114,7 +114,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                 vol.Optional(schema=CONF_PORT, default="502"): cv.port,
                 vol.Optional(schema=CONF_PREFIX, default=CONST.DEF_PREFIX): str,
                 vol.Optional(schema=CONF_DEVICE_POSTFIX, default=""): str,
-                #        vol.Optional(CONF_KENNFELD_FILE, default=CONST.DEF_KENNFELDFILE): str,
                 vol.Optional(
                     schema=CONF_KENNFELD_FILE, default="weishaupt_wbb_kennfeld.json"
                 ): vol.In(container=await build_kennfeld_list(self.hass)),
@@ -175,7 +174,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                     schema=CONF_DEVICE_POSTFIX,
                     default=reconfigure_entry.data[CONF_DEVICE_POSTFIX],
                 ): str,
-                # vol.Optional(CONF_KENNFELD_FILE, default=CONST.DEF_KENNFELDFILE): str,
                 vol.Optional(
                     schema=CONF_KENNFELD_FILE,
                     default=reconfigure_entry.data[CONF_KENNFELD_FILE],
@@ -217,51 +215,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                 CONF_HOST: "myhostname",
             },
         )
-
-    # @staticmethod
-    # @callback
-    # def async_get_options_flow(
-    #    config_entry: config_entries.ConfigEntry,
-    # ) -> config_entries.OptionsFlow:
-    #    """Create the options flow."""
-    #    return OptionsFlowHandler(config_entry)
-
-
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Options flow handler."""
-
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
-
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Manage the options."""
-
-        schema_options_flow = vol.Schema(
-            schema={
-                vol.Optional(schema=CONF_PORT, default="502"): cv.port,
-                vol.Optional(schema=CONF_PREFIX, default=CONST.DEF_PREFIX): str,
-                vol.Optional(schema=CONF_DEVICE_POSTFIX, default=""): str,
-                #        vol.Optional(CONF_KENNFELD_FILE, default=CONST.DEF_KENNFELDFILE): str,
-                vol.Optional(
-                    schema=CONF_KENNFELD_FILE, default="weishaupt_wbb_kennfeld.json"
-                ): vol.In(container=await build_kennfeld_list(self.hass)),
-                vol.Optional(schema=CONF_HK2, default=False): bool,
-                vol.Optional(schema=CONF_HK3, default=False): bool,
-                vol.Optional(schema=CONF_HK4, default=False): bool,
-                vol.Optional(schema=CONF_HK5, default=False): bool,
-                vol.Optional(schema=CONF_NAME_DEVICE_PREFIX, default=False): bool,
-                vol.Optional(schema=CONF_NAME_TOPIC_PREFIX, default=False): bool,
-            }
-        )
-
-        if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
-
-        return self.async_show_form(step_id="init", data_schema=schema_options_flow)
-
 
 class InvalidHost(exceptions.HomeAssistantError):
     """Error to indicate there is an invalid hostname."""

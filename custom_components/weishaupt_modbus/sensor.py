@@ -35,7 +35,7 @@ async def async_setup_entry(
             p_config_entry=config_entry,
         )
         await coordinator.async_config_entry_first_refresh()
-
+        log.debug("Adding entries to entity list ..")
         entries = await build_entity_list(
             entries=entries,
             config_entry=config_entry,
@@ -50,8 +50,6 @@ async def async_setup_entry(
             item_type=TYPES.SENSOR_CALC,
             coordinator=coordinator,
         )
-
-        log.debug(msg="Adding sensor entries to entity list ..")
 
         # Webif Sensors here
         entries = await build_entity_list(
