@@ -62,17 +62,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     await mbapi.connect()
     entry.runtime_data = MyData(mbapi, hass.config.config_dir, hass)
 
-    migrate_entities(entry, MODBUS_SYS_ITEMS, DEVICENAMES.SYS)
-    migrate_entities(entry, MODBUS_HZ_ITEMS, DEVICENAMES.HZ)
-    migrate_entities(entry, MODBUS_HZ2_ITEMS, DEVICENAMES.HZ2)
-    migrate_entities(entry, MODBUS_HZ3_ITEMS, DEVICENAMES.HZ3)
-    migrate_entities(entry, MODBUS_HZ4_ITEMS, DEVICENAMES.HZ4)
-    migrate_entities(entry, MODBUS_HZ5_ITEMS, DEVICENAMES.HZ5)
-    migrate_entities(entry, MODBUS_WP_ITEMS, DEVICENAMES.WP)
-    migrate_entities(entry, MODBUS_WW_ITEMS, DEVICENAMES.WW)
-    migrate_entities(entry, MODBUS_W2_ITEMS, DEVICENAMES.W2)
-    migrate_entities(entry, MODBUS_IO_ITEMS, DEVICENAMES.IO)
-    migrate_entities(entry, MODBUS_ST_ITEMS, DEVICENAMES.ST)
+    hass.add_job(migrate_entities, entry, MODBUS_SYS_ITEMS, DEVICENAMES.SYS)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ_ITEMS, DEVICENAMES.HZ)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ2_ITEMS, DEVICENAMES.HZ2)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ3_ITEMS, DEVICENAMES.HZ3)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ4_ITEMS, DEVICENAMES.HZ4)
+    hass.add_job(migrate_entities, entry, MODBUS_HZ5_ITEMS, DEVICENAMES.HZ5)
+    hass.add_job(migrate_entities, entry, MODBUS_WP_ITEMS, DEVICENAMES.WP)
+    hass.add_job(migrate_entities, entry, MODBUS_WW_ITEMS, DEVICENAMES.WW)
+    hass.add_job(migrate_entities, entry, MODBUS_W2_ITEMS, DEVICENAMES.W2)
+    hass.add_job(migrate_entities, entry, MODBUS_IO_ITEMS, DEVICENAMES.IO)
+    hass.add_job(migrate_entities, entry, MODBUS_ST_ITEMS, DEVICENAMES.ST)
 
     # see https://community.home-assistant.io/t/config-flow-how-to-update-an-existing-entity/522442/8
     entry.async_on_unload(entry.add_update_listener(update_listener))
@@ -133,7 +133,6 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: MyConfigEntry):
     hass.config_entries.async_update_entry(
         config_entry, data=new_data, minor_version=1, version=6
     )
-
     return True
 
 

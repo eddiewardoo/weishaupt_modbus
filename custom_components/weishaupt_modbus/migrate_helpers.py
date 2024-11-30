@@ -5,6 +5,7 @@ import logging
 from homeassistant.util import slugify
 from homeassistant.helpers import entity_registry as er
 from homeassistant.const import CONF_PREFIX
+from homeassistant.core import callback
 
 from .const import (
     CONF_DEVICE_POSTFIX,
@@ -21,23 +22,6 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
-def create_old_id(config_entry: MyConfigEntry, modbus_item: ModbusItem):
-    """created an entity ID according to old style"""
-    if config_entry.data[CONF_NAME_DEVICE_PREFIX]:
-        name_device_prefix = config_entry.data[CONF_PREFIX] + "_"
-    else:
-        name_device_prefix = ""
-
-    if config_entry.data[CONF_NAME_TOPIC_PREFIX]:
-        name_topic_prefix = reverse_device_list[modbus_item.device] + "_"
-    else:
-        name_topic_prefix = ""
-
-    entity_name = name_topic_prefix + name_device_prefix + modbus_item.name
-
-    return slugify(entity_name)
-
-
 def create_new_entity_id(
     config_entry: MyConfigEntry, modbus_item: ModbusItem, platform: str, device: str
 ):
@@ -46,7 +30,6 @@ def create_new_entity_id(
     if dev_postfix == "_":
         dev_postfix = ""
 
-    # device_name = modbus_item.device + dev_postfix
     device_name = device + dev_postfix
 
     if config_entry.data[CONF_NAME_DEVICE_PREFIX]:
@@ -74,7 +57,12 @@ def create_unique_id(config_entry: MyConfigEntry, modbus_item: ModbusItem):
     return str(config_entry.data[CONF_PREFIX] + modbus_item.name + dev_postfix)
 
 
-def migrate_entities(config_entry: MyConfigEntry, modbusitems: ModbusItem, device: str):
+@callback
+def migrate_entities(
+    config_entry: MyConfigEntry,
+    modbusitems: ModbusItem,
+    device: str,
+):
     """Build entity list.
 
     function builds a list of entities that can be used as parameter by async_setup_entry()
@@ -82,13 +70,13 @@ def migrate_entities(config_entry: MyConfigEntry, modbusitems: ModbusItem, devic
     so the app only holds one list of entities that is build from a list of ModbusItem
     stored in hpconst.py so far, will be provided by an external file in future
     """
+    # return
+
     entity_registry = er.async_get(config_entry.runtime_data.hass)
 
     for _useless, item in enumerate(modbusitems):
         platform = ""
         match item.type:
-            # here the entities are created with the parameters provided
-            # by the ModbusItem object
             case TYPES.SENSOR | TYPES.NUMBER_RO | TYPES.SENSOR_CALC:
                 platform = "sensor"
             case TYPES.SELECT:
@@ -96,7 +84,6 @@ def migrate_entities(config_entry: MyConfigEntry, modbusitems: ModbusItem, devic
             case TYPES.NUMBER:
                 platform = "number"
 
-        old_id = create_old_id(config_entry, item)
         old_uid = create_unique_id(config_entry, item)
         new_entity_id = create_new_entity_id(config_entry, item, platform, device)
         old_entity_id = entity_registry.async_get_entity_id(
@@ -104,7 +91,7 @@ def migrate_entities(config_entry: MyConfigEntry, modbusitems: ModbusItem, devic
         )
 
         if new_entity_id == old_entity_id:
-            log.info("already migrated")
+            log.info("already migrated %s", old_entity_id)
             return
 
         if old_entity_id is not None:
@@ -115,20 +102,18 @@ def migrate_entities(config_entry: MyConfigEntry, modbusitems: ModbusItem, devic
                 )
 
                 log.info(
-                    "Init UID:%s, platform:%s old ID:%s --> %s new ID:%s",
+                    "Init UID:%s, platform:%s old ID:%s new ID:%s",
                     old_uid,
                     platform,
-                    old_id,
                     old_entity_id,
                     new_entity_id,
                 )
-            except:
+            except KeyError as key:
                 log.warning(
-                    "Already existing UID:%s, platform:%s old ID:%s --> %s new ID:%s",
+                    "Exception %s old UID:%s, platform:%s old ID:%s new ID:%s",
+                    str(key),
                     old_uid,
                     platform,
-                    old_id,
                     old_entity_id,
                     new_entity_id,
                 )
-                

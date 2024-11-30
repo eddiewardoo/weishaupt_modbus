@@ -3,6 +3,7 @@
 A Modbus object that contains a Modbus item and communicates with the Modbus.
 It contains a ModbusClient for setting and getting Modbus register values
 """
+
 import asyncio
 import logging
 
@@ -18,11 +19,13 @@ from .items import ModbusItem
 logging.basicConfig()
 log = logging.getLogger(__name__)
 
+
 class ModbusAPI:
     """
     ModbusAPI class that provides a connection to the modbus,
     which is used by the ModbusItems.
     """
+
     def __init__(self, config_entry: MyConfigEntry) -> None:
         """Construct ModbusAPI.
 
@@ -73,6 +76,7 @@ class ModbusObject:
     A Modbus object that contains a Modbus item and communicates with the Modbus.
     It contains a ModbusClient for setting and getting Modbus register values
     """
+
     def __init__(self, modbus_api: ModbusAPI, modbus_item: ModbusItem) -> None:
         """Construct ModbusObject.
 
@@ -84,7 +88,7 @@ class ModbusObject:
         self._modbus_item = modbus_item
         self._modbus_client = modbus_api.get_device()
 
-    def check_valid(self, val) -> int:
+    def check_valid_result(self, val) -> int:
         """Check if item is available and valid."""
         match self._modbus_item.format:
             case FORMATS.TEMPERATUR:
@@ -98,7 +102,7 @@ class ModbusObject:
                 return val
 
     def check_temperature(self, val) -> int:
-        """Check availability of temperature item and translate 
+        """Check availability of temperature item and translate
         return value to valid int
 
         :param val: The value from the modbus
@@ -124,7 +128,7 @@ class ModbusObject:
                 return val
 
     def check_percentage(self, val) -> int:
-        """Check availability of percentage item and translate 
+        """Check availability of percentage item and translate
         return value to valid int
 
         :param val: The value from the modbus
@@ -141,6 +145,16 @@ class ModbusObject:
         self._modbus_item.is_invalid = False
         return val
 
+    def check_valid_response(self, val) -> int:
+        """Check if item is valid to write."""
+        match self._modbus_item.format:
+            case FORMATS.TEMPERATUR:
+                if val < 0:
+                    val = val + 65536
+                return val
+            case _:
+                return val
+
     def validate_modbus_answer(self, mbr) -> int:
         """Check if there's a valid answer from modbus and
         translate it to a valid int depending from type
@@ -153,28 +167,26 @@ class ModbusObject:
                 self._modbus_item.is_invalid = True
             else:
                 log.warning(
-                   "Received Modbus library error: "
-                   + str(mbr)
-                   + "in item: "
-                   + str(self._modbus_item.name)
+                    "Received Modbus library error: %s in item: %s",
+                    str(mbr),
+                    str(self._modbus_item.name),
                 )
             return None
         if isinstance(mbr, ExceptionResponse):
             log.warning(
-               "Received ModbusException: "
-               + str(mbr)
-               + " from library in item: "
-               + str(self._modbus_item.name)
+                "Received ModbusException: %s from library in item: %s",
+                str(mbr),
+                str(self._modbus_item.name),
             )
             return None
             # THIS IS NOT A PYTHON EXCEPTION, but a valid modbus message
         if len(mbr.registers) > 0:
-            val = self.check_valid(mbr.registers[0])
+            val = self.check_valid_result(mbr.registers[0])
             log.debug(
-                   "Item %s val=%d and invalid = %s",
-                   self._modbus_item.name,
-                   val,
-                   self._modbus_item.is_invalid,
+                "Item %s val=%d and invalid = %s",
+                self._modbus_item.name,
+                val,
+                self._modbus_item.is_invalid,
             )
             return val
 
@@ -184,7 +196,6 @@ class ModbusObject:
         if self._modbus_client is None:
             return None
 
-        val = None
         if not self._modbus_item.is_invalid:
             try:
                 match self._modbus_item.type:
@@ -202,20 +213,17 @@ class ModbusObject:
                         )
                         return self.validate_modbus_answer(mbr)
                     case _:
-                        val = None
                         log.warning(
-                            "Unknown Sensor type: "
-                            + str(self._modbus_item.type)
-                            + "in "
-                            + str(self._modbus_item.name)
+                            "Unknown Sensor type: %s in %s",
+                            str(self._modbus_item.type),
+                            str(self._modbus_item.name),
                         )
+                        return None
             except ModbusException as exc:
                 log.warning(
-                    "ModbusException: Reading "
-                    + str(exc)
-                    + "in item: "
-                    + str(self._modbus_item.name)
-                    + " failed"
+                    "ModbusException: Reading %s in item: %s failed",
+                    str(exc),
+                    str(self._modbus_item.name),
                 )
                 return None
 
@@ -233,19 +241,16 @@ class ModbusObject:
                     # Sensor entities are read-only
                     return
                 case _:
-                    if self._modbus_item.format == FORMATS.TEMPERATUR:
-                        if value < 0:
-                            value=value+65536
                     await self._modbus_client.write_register(
-                        self._modbus_item.address, int(value), slave=1
+                        self._modbus_item.address,
+                        self.check_valid_response(value),
+                        slave=1,
                     )
         except ModbusException:
             log.warning(
-                "ModbusException: Writing "
-                + str(value)
-                + " to "
-                + str(self._modbus_item.name)
-                + " ("
-                + str(self._modbus_item.address + ")" + " failed")
+                "ModbusException: Writing %s to %s (%s) failed",
+                str(value),
+                str(self._modbus_item.name),
+                str(self._modbus_item.address),
             )
             return None
