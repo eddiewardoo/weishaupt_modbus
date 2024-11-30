@@ -1,3 +1,7 @@
+# 1.0.4
+- Translation is enabled now.
+- Enabling translations required change to new entity name style. We try to migrate the existing entities, so that the statistics remain. Due to issues in HAs recorder service this is not always stable. In case of lost statistics and if you want to manually migrate them, please have a look at the renaming tool in the subfolder entity_rename
+
 # 1.0.3:
 - Quickfix for name issue of devices
 
