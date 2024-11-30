@@ -84,6 +84,7 @@ class ModbusItem:
     _state = None
     _is_invalid = False
     _translation_key: str = ""
+    _params = None
 
     def __init__(
         self,
@@ -94,6 +95,7 @@ class ModbusItem:
         device: DeviceConstants,
         translation_key: str = None,
         resultlist=None,
+        params: dict = None,
     ) -> None:
         """Initialise ModbusItem."""
         self._address = address
@@ -105,6 +107,16 @@ class ModbusItem:
         self._state = None
         self._is_invalid = False
         self._translation_key = translation_key
+        self._params = params
+
+    @property
+    def params(self) -> dict:
+        """Return state."""
+        return self._params
+
+    @params.setter
+    def params(self, val: dict):
+        self._params = val
 
     @property
     def is_invalid(self) -> bool:

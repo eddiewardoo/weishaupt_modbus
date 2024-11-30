@@ -18,7 +18,7 @@ from .const import (
     CONF_HK4,
     CONF_HK5,
 )
-from .hpconst import DEVICES, TEMPRANGE_STD
+from .hpconst import DEVICES, PARAMS_STDTEMP
 from .items import ModbusItem
 from .modbusobject import ModbusObject, ModbusAPI
 from .configentry import MyConfigEntry
@@ -127,32 +127,32 @@ class MyCoordinator(DataUpdateCoordinator):
                     case TYPES.SENSOR_CALC:
                         r1 = await self.get_value_a(item)
                         item_x = ModbusItem(
-                            item.get_number_from_text("x"),
+                            item.params["x"],
                             "x",
                             FORMATS.TEMPERATUR,
                             TYPES.SENSOR_CALC,
                             DEVICES.SYS,
-                            TEMPRANGE_STD,
+                            params=PARAMS_STDTEMP,
                         )
                         r2 = await self.get_value(item_x)
                         if r2 is None:
                             # use Aussentemperatur if Luftansaugtemperatur not available
                             item_x = ModbusItem(
-                                item.get_number_from_text("x2"),
+                                item.params["x2"],
                                 "x2",
                                 FORMATS.TEMPERATUR,
                                 TYPES.SENSOR_CALC,
                                 DEVICES.SYS,
-                                TEMPRANGE_STD,
+                                params=PARAMS_STDTEMP,
                             )
                             r2 = await self.get_value(item_x)
                         item_y = ModbusItem(
-                            item.get_number_from_text("y"),
+                            item.params["y"],
                             "y",
                             FORMATS.TEMPERATUR,
                             TYPES.SENSOR_CALC,
                             DEVICES.WP,
-                            TEMPRANGE_STD,
+                            params=PARAMS_STDTEMP,
                         )
                         r3 = await self.get_value(item_y)
 

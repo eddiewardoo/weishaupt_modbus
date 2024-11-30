@@ -205,16 +205,12 @@ class MyEntity(Entity):
                 ):
                     self._attr_state_class = SensorStateClass.MEASUREMENT
 
-            if self._modbus_item.resultlist is not None:
-                self._attr_native_min_value = self._modbus_item.get_number_from_text(
-                    "min"
-                )
-                self._attr_native_max_value = self._modbus_item.get_number_from_text(
-                    "max"
-                )
-                self._attr_native_step = self._modbus_item.get_number_from_text("step")
-                self._divider = self._modbus_item.get_number_from_text("divider")
-                self._attr_device_class = self._modbus_item.get_text_from_number(-1)
+            if self._modbus_item.params is not None:
+                self._attr_native_min_value = self._modbus_item.params["min"]
+                self._attr_native_max_value = self._modbus_item.params["max"]
+                self._attr_native_step = self._modbus_item.params["step"]
+                self._divider = self._modbus_item.params["divider"]
+                self._attr_device_class = self._modbus_item.params["deviceclass"]
 
     def translate_val(self, val) -> float:
         """Translate modbus value into sensful format."""
@@ -370,10 +366,10 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
         self._idx = idx
         MyEntity.__init__(self, config_entry, modbus_item, coordinator._modbus_api)
 
-        if self._modbus_item.resultlist is not None:
-            self._attr_native_min_value = self._modbus_item.get_number_from_text("min")
-            self._attr_native_max_value = self._modbus_item.get_number_from_text("max")
-            self._attr_native_step = self._modbus_item.get_number_from_text("step")
+        # if self._modbus_item.resultlist is not None:
+        #    self._attr_native_min_value = self._modbus_item.get_number_from_text("min")
+        #    self._attr_native_max_value = self._modbus_item.get_number_from_text("max")
+        #    self._attr_native_step = self._modbus_item.get_number_from_text("step")
 
     @callback
     def _handle_coordinator_update(self) -> None:
