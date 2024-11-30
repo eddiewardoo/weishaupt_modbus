@@ -1,29 +1,37 @@
 """Config flow."""
 
 from typing import Any
+from aiofiles.os import scandir
 import voluptuous as vol
 from aiofiles.os import scandir
 from homeassistant import config_entries, exceptions
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_PORT,
+    CONF_PREFIX,
+    CONF_PASSWORD,
+    CONF_USERNAME,
+)
 from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResult
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_PREFIX
 import homeassistant.helpers.config_validation as cv
 
-
 from .const import (
-    CONST,
     CONF_DEVICE_POSTFIX,
-    CONF_KENNFELD_FILE,
     CONF_HK2,
     CONF_HK3,
     CONF_HK4,
     CONF_HK5,
+    CONF_KENNFELD_FILE,
     CONF_NAME_DEVICE_PREFIX,
     CONF_NAME_TOPIC_PREFIX,
+    CONST,
 )
 
 
 async def build_kennfeld_list(hass: HomeAssistant):
-    """browses integration directory for kennfeld files"""
+    """Browse integration directory for kennfeld files."""
     kennfelder = []
     filelist = []
 
@@ -31,12 +39,17 @@ async def build_kennfeld_list(hass: HomeAssistant):
 
     dir_iterator = await scandir(filepath)
 
-    for filename in dir_iterator:
-        filelist.append(filename)
+    # for filename in dir_iterator:
+    #    filelist.append(filename)
 
-    for _useless, item in enumerate(filelist):
-        if item.name.__contains__("kennfeld.json"):
-            kennfelder.append(item.name)
+    filelist = list(dir_iterator)
+
+    for item in filelist:
+        if "kennfeld.json" in item.name:
+            kennfelder.append(item.name)  # noqa: PERF401
+
+    # get this working
+    # kennfelder = [item for item in filelist if "kennfeld.json" in item.name]
 
     if len(kennfelder) < 1:
         kennfelder.append("weishaupt_wbb_kennfeld.json")
@@ -82,7 +95,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
     # changes.
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(self, user_input=None) -> config_entries.ConfigFlowResult:
         """Step for setup process."""
         # This goes through the steps to take the user through the setup process.
         # Using this it is possible to update the UI and prompt for additional
@@ -96,20 +109,22 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
         # strings.json can be processed into en.json with some HA commands.
         # did not find out how this works yet.
         data_schema = vol.Schema(
-            {
-                vol.Required(CONF_HOST): str,
-                vol.Optional(CONF_PORT, default="502"): cv.port,
-                vol.Optional(CONF_PREFIX, default=CONST.DEF_PREFIX): str,
-                vol.Optional(CONF_DEVICE_POSTFIX, default=""): str,
+            schema={
+                vol.Required(schema=CONF_HOST): str,
+                vol.Optional(schema=CONF_PORT, default="502"): cv.port,
+                vol.Optional(schema=CONF_PREFIX, default=CONST.DEF_PREFIX): str,
+                vol.Optional(schema=CONF_DEVICE_POSTFIX, default=""): str,
                 vol.Optional(
-                    CONF_KENNFELD_FILE, default="weishaupt_wbb_kennfeld.json"
-                ): vol.In(await build_kennfeld_list(self.hass)),
-                vol.Optional(CONF_HK2, default=False): bool,
-                vol.Optional(CONF_HK3, default=False): bool,
-                vol.Optional(CONF_HK4, default=False): bool,
-                vol.Optional(CONF_HK5, default=False): bool,
-                vol.Optional(CONF_NAME_DEVICE_PREFIX, default=False): bool,
-                vol.Optional(CONF_NAME_TOPIC_PREFIX, default=False): bool,
+                    schema=CONF_KENNFELD_FILE, default="weishaupt_wbb_kennfeld.json"
+                ): vol.In(container=await build_kennfeld_list(self.hass)),
+                vol.Optional(schema=CONF_HK2, default=False): bool,
+                vol.Optional(schema=CONF_HK3, default=False): bool,
+                vol.Optional(schema=CONF_HK4, default=False): bool,
+                vol.Optional(schema=CONF_HK5, default=False): bool,
+                vol.Optional(schema=CONF_NAME_DEVICE_PREFIX, default=False): bool,
+                vol.Optional(schema=CONF_NAME_TOPIC_PREFIX, default=False): bool,
+                vol.Optional(schema=CONF_USERNAME, default=""): str,
+                vol.Optional(schema=CONF_PASSWORD, default=""): str,
             }
         )
 
@@ -117,7 +132,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
         info = None
         if user_input is not None:
             try:
-                info = await validate_input(user_input)
+                info = await validate_input(data=user_input)
 
                 return self.async_create_entry(title=info["title"], data=user_input)
 
@@ -134,43 +149,61 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
     ) -> config_entries.ConfigFlowResult:
         """Trigger a reconfiguration flow."""
         errors: dict[str, str] = {}
-        reconfigure_entry = self._get_reconfigure_entry()
+        reconfigure_entry: config_entries.ConfigEntry[Any] = (
+            self._get_reconfigure_entry()
+        )
 
         if user_input:
             return self.async_update_reload_and_abort(
-                reconfigure_entry, data_updates=user_input
+                entry=reconfigure_entry, data_updates=user_input
             )
 
         schema_reconfigure = vol.Schema(
-            {
-                vol.Required(CONF_HOST, default=reconfigure_entry.data[CONF_HOST]): str,
+            schema={
+                vol.Required(
+                    schema=CONF_HOST, default=reconfigure_entry.data[CONF_HOST]
+                ): str,
                 vol.Optional(
-                    CONF_PORT, default=reconfigure_entry.data[CONF_PORT]
+                    schema=CONF_PORT, default=reconfigure_entry.data[CONF_PORT]
                 ): cv.port,
                 vol.Optional(
-                    CONF_PREFIX, default=reconfigure_entry.data[CONF_PREFIX]
+                    schema=CONF_PREFIX, default=reconfigure_entry.data[CONF_PREFIX]
                 ): str,
                 # reconfigure of device postfix leads to duplicated devices
                 vol.Optional(
-                    CONF_DEVICE_POSTFIX,
+                    schema=CONF_DEVICE_POSTFIX,
                     default=reconfigure_entry.data[CONF_DEVICE_POSTFIX],
                 ): str,
                 vol.Optional(
-                    CONF_KENNFELD_FILE,
+                    schema=CONF_KENNFELD_FILE,
                     default=reconfigure_entry.data[CONF_KENNFELD_FILE],
-                ): vol.In(await build_kennfeld_list(self.hass)),
-                vol.Optional(CONF_HK2, default=reconfigure_entry.data[CONF_HK2]): bool,
-                vol.Optional(CONF_HK3, default=reconfigure_entry.data[CONF_HK3]): bool,
-                vol.Optional(CONF_HK4, default=reconfigure_entry.data[CONF_HK4]): bool,
-                vol.Optional(CONF_HK5, default=reconfigure_entry.data[CONF_HK5]): bool,
+                ): vol.In(container=await build_kennfeld_list(hass=self.hass)),
                 vol.Optional(
-                    CONF_NAME_DEVICE_PREFIX,
+                    schema=CONF_HK2, default=reconfigure_entry.data[CONF_HK2]
+                ): bool,
+                vol.Optional(
+                    schema=CONF_HK3, default=reconfigure_entry.data[CONF_HK3]
+                ): bool,
+                vol.Optional(
+                    schema=CONF_HK4, default=reconfigure_entry.data[CONF_HK4]
+                ): bool,
+                vol.Optional(
+                    schema=CONF_HK5, default=reconfigure_entry.data[CONF_HK5]
+                ): bool,
+                vol.Optional(
+                    schema=CONF_NAME_DEVICE_PREFIX,
                     default=reconfigure_entry.data[CONF_NAME_DEVICE_PREFIX],
                 ): bool,
                 vol.Optional(
-                    CONF_NAME_TOPIC_PREFIX,
+                    schema=CONF_NAME_TOPIC_PREFIX,
                     default=reconfigure_entry.data[CONF_NAME_TOPIC_PREFIX],
                 ): bool,
+                vol.Optional(
+                    schema=CONF_USERNAME, default=reconfigure_entry.data[CONF_USERNAME]
+                ): str,
+                vol.Optional(
+                    schema=CONF_PASSWORD, default=reconfigure_entry.data[CONF_PASSWORD]
+                ): str,
             }
         )
 
@@ -182,7 +215,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                 CONF_HOST: "myhostname",
             },
         )
-
 
 class InvalidHost(exceptions.HomeAssistantError):
     """Error to indicate there is an invalid hostname."""

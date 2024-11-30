@@ -2,14 +2,17 @@
 
 import logging
 import json
+import logging
 import aiofiles
 
+import aiofiles
 import numpy as np
 from numpy.polynomial import Chebyshev
-# from scipy.interpolate import CubicSpline
 
-from .const import CONF_KENNFELD_FILE, CONST
 from .configentry import MyConfigEntry
+
+# from scipy.interpolate import CubicSpline
+from .const import CONF_KENNFELD_FILE, CONST
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -86,7 +89,7 @@ class PowerMap:
         self._r_to_interpolate = 0
 
     async def initialize(self):
-        """initialize the power map"""
+        """Initialize the power map."""
         try:
             filepath = (
                 self._config_entry.runtime_data.config_dir
@@ -95,14 +98,14 @@ class PowerMap:
                 + "/"
                 + self._config_entry.data[CONF_KENNFELD_FILE]
             )
-            async with aiofiles.open(filepath, "r", encoding="utf-8") as openfile:
+            async with aiofiles.open(filepath, encoding="utf-8") as openfile:
                 raw_block = await openfile.read()
                 json_object = json.loads(raw_block)
                 self.known_x = json_object["known_x"]
                 self.known_y = json_object["known_y"]
                 self.known_t = json_object["known_t"]
                 log.info("Reading power map file %s successful", filepath)
-        except IOError:
+        except OSError:
             kennfeld = {
                 "known_x": self.known_x,
                 "known_y": self.known_y,
@@ -127,11 +130,11 @@ class PowerMap:
         # 1st and last row are populated by known values from diagrem, the rest is zero
         self._interp_y.append(self.known_y[0])
         v = np.linspace(0, self._steps - 3, self._steps - 2)
-        for idx in v:
+        for _idx in v:
             self._interp_y.append(np.zeros_like(self.known_x))
         self._interp_y.append(self.known_y[1])
 
-        for idx in range(0, len(self.known_x)):
+        for idx in range(len(self.known_x)):
             # the known y for every column
             yk = [self._interp_y[0][idx], self._interp_y[self._steps - 1][idx]]
 
@@ -139,14 +142,14 @@ class PowerMap:
             ip = np.interp(self._r_to_interpolate, self.known_t, yk)
 
             # sort the interpolated values into the array
-            for r in range(0, len(self._r_to_interpolate)):
+            for r in range(len(self._r_to_interpolate)):
                 self._interp_y[r][idx] = ip[r]
 
         # at second step, power vs. outside temp are interpolated using cubic splines
         # we want to have samples at every integer °C
         t = np.linspace(-30, 40, 71)
         # cubic spline interpolation of power curves
-        for idx in range(0, len(self._r_to_interpolate)):
+        for idx in range(len(self._r_to_interpolate)):
             # f = CubicSpline(self.known_x, self.interp_y[idx], bc_type='natural')
             f = Chebyshev.fit(self.known_x, self._interp_y[idx], deg=8)
             self._max_power.append(f(t))
@@ -154,15 +157,11 @@ class PowerMap:
     def map(self, x, y):
         """Map."""
         x = x - self.known_x[0]
-        if x < 0:
-            x = 0
-        if x > 70:
-            x = 70
+        x = max(x, 0)
+        x = min(x, 70)
         y = y - self.known_t[0]
-        if y < 0:
-            y = 0
-        if y > (self._steps - 1):
-            y = self._steps - 1
+        y = max(y, 0)
+        y = min(y, self._steps - 1)
 
         return self._max_power[int(y)][int(x)]
 

@@ -7,14 +7,14 @@ import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import TYPES
-from .hpconst import DEVICELISTS
-from .entities import build_entity_list
-from .coordinator import MyCoordinator
 from .configentry import MyConfigEntry
+from .const import TYPES
+from .coordinator import MyCoordinator, MyWebIfCoordinator
+from .entities import MyWebifSensorEntity, build_entity_list
+from .hpconst import DEVICELISTS, WEBIF_INFO_HEIZKREIS1
 
 logging.basicConfig()
-log = logging.getLogger(__name__)
+log: logging.Logger = logging.getLogger(name=__name__)
 
 
 async def async_setup_entry(
@@ -27,20 +27,54 @@ async def async_setup_entry(
 
     entries = []
 
-    for _useless, device in enumerate(DEVICELISTS):
-        coordinator = MyCoordinator(hass, _modbus_api, device, config_entry)
+    for device in DEVICELISTS:
+        coordinator = MyCoordinator(
+            hass=hass,
+            my_api=_modbus_api,
+            api_items=device,
+            p_config_entry=config_entry,
+        )
         await coordinator.async_config_entry_first_refresh()
         log.debug("Adding entries to entity list ..")
         entries = await build_entity_list(
-            entries, config_entry, device, TYPES.NUMBER_RO, coordinator
+            entries=entries,
+            config_entry=config_entry,
+            api_items=device,
+            item_type=TYPES.NUMBER_RO,
+            coordinator=coordinator,
         )
         entries = await build_entity_list(
-            entries, config_entry, device, TYPES.SENSOR_CALC, coordinator
-        )
-        entries = await build_entity_list(
-            entries, config_entry, device, TYPES.SENSOR, coordinator
+            entries=entries,
+            config_entry=config_entry,
+            api_items=device,
+            item_type=TYPES.SENSOR_CALC,
+            coordinator=coordinator,
         )
 
+        # Webif Sensors here
+        entries = await build_entity_list(
+            entries=entries,
+            config_entry=config_entry,
+            api_items=device,
+            item_type=TYPES.SENSOR,
+            coordinator=coordinator,
+        )
+
+    webifcoordinator = MyWebIfCoordinator(hass=hass, config_entry=config_entry)
+
+    webifentries = []
+
+    for webifitem in WEBIF_INFO_HEIZKREIS1:
+        webifentries.append(  # noqa: PERF401
+            MyWebifSensorEntity(
+                config_entry=config_entry,
+                api_item=webifitem,
+                coordinator=webifcoordinator,
+                idx=1,
+            )
+        )
+
+    entries = entries + webifentries
     async_add_entities(
         entries,
         update_before_add=True,

@@ -234,7 +234,7 @@ class ModbusObject:
         :param val: The value to write to the modbus
         :type val: int"""
         if self._modbus_client is None:
-            return None
+            return
         try:
             match self._modbus_item.type:
                 case TYPES.SENSOR | TYPES.NUMBER_RO | TYPES.SENSOR_CALC:
@@ -253,4 +253,4 @@ class ModbusObject:
                 str(self._modbus_item.name),
                 str(self._modbus_item.address),
             )
-            return None
+            return
