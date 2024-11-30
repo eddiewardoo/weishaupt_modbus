@@ -236,6 +236,7 @@ class WebItem(ApiItem):
         webif_group: str,
         translation_key: str | None = None,
         resultlist=None,
+        params: dict = None,
     ) -> None:
         """WebifItem is used to generate sensors for an Webinterface value.
 
@@ -257,8 +258,9 @@ class WebItem(ApiItem):
             device=device,
             translation_key=translation_key,
             resultlist=resultlist,
+            params=params,
         )
-        _webif_group: str = webif_group
+        self._webif_group: str = webif_group
 
     @property
     def webif_group(self) -> str:
@@ -285,6 +287,7 @@ class ModbusItem(ApiItem):
         device: DeviceConstants,
         translation_key: str,
         resultlist=None,
+        params: dict = None,
     ) -> None:
         """ModbusItem is used to generate entitys.
 
@@ -306,6 +309,7 @@ class ModbusItem(ApiItem):
             device=device,
             translation_key=translation_key,
             resultlist=resultlist,
+            params=params,
         )
         self._address: str = address
 
