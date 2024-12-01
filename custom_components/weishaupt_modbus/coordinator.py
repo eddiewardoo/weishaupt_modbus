@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .configentry import MyConfigEntry
-from .const import CONF_HK2, CONF_HK3, CONF_HK4, CONF_HK5, CONST, FORMATS, TYPES
+from .const import CONF, CONST, FORMATS, TYPES
 from .hpconst import DEVICES, PARAMS_STDTEMP
 from .items import ModbusItem
 from .modbusobject import ModbusAPI, ModbusObject
@@ -63,21 +63,28 @@ class MyCoordinator(DataUpdateCoordinator):
             return None
         return await mbo.value
 
+    async def get_value_from_item(self, translation_key: str):
+        """Read a value from another modbus item"""
+        for _useless, item in enumerate(self._modbusitems):
+            if item.translation_key == translation_key:
+                return item.state
+        return item.state
+
     async def check_configured(self, modbus_item: ModbusItem) -> bool:
         """Check if item is configured."""
-        if self._config_entry.data[CONF_HK2] is False:
+        if self._config_entry.data[CONF.HK2] is False:
             if modbus_item.device is DEVICES.HZ2:
                 return False
 
-        if self._config_entry.data[CONF_HK3] is False:
+        if self._config_entry.data[CONF.HK3] is False:
             if modbus_item.device is DEVICES.HZ3:
                 return False
 
-        if self._config_entry.data[CONF_HK4] is False:
+        if self._config_entry.data[CONF.HK4] is False:
             if modbus_item.device is DEVICES.HZ4:
                 return False
 
-        if self._config_entry.data[CONF_HK5] is False:
+        if self._config_entry.data[CONF.HK5] is False:
             if modbus_item.device is DEVICES.HZ5:
                 return False
         return True

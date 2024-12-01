@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString, ResultSet, Tag
 
 
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME  # noqa: F401
+from .const import CONF
 
 from .configentry import MyConfigEntry
 
@@ -39,9 +39,9 @@ class WebifConnection:
         Todo: Get info from config.
 
         """
-        self._ip = config_entry.data[CONF_HOST]
-        self._username = config_entry.data[CONF_USERNAME]
-        self._password = config_entry.data[CONF_PASSWORD]
+        self._ip = config_entry.data[CONF.HOST]
+        self._username = config_entry.data[CONF.USERNAME]
+        self._password = config_entry.data[CONF.PASSWORD]
         self._base_url = "http://" + self._ip
         self._config_entry = config_entry
 

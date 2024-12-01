@@ -10,10 +10,8 @@ import logging
 from pymodbus import ExceptionResponse, ModbusException
 from pymodbus.client import AsyncModbusTcpClient
 
-from homeassistant.const import CONF_HOST, CONF_PORT
-
 from .configentry import MyConfigEntry
-from .const import FORMATS, TYPES
+from .const import FORMATS, TYPES, CONF
 from .items import ModbusItem
 
 logging.basicConfig()
@@ -32,8 +30,8 @@ class ModbusAPI:
         :param config_entry: HASS config entry
         :type config_entry: MyConfigEntry
         """
-        self._ip = config_entry.data[CONF_HOST]
-        self._port = config_entry.data[CONF_PORT]
+        self._ip = config_entry.data[CONF.HOST]
+        self._port = config_entry.data[CONF.PORT]
         self._modbus_client = None
 
     async def connect(self):
