@@ -10,7 +10,6 @@ import aiohttp
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, ResultSet, Tag
 
-
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME  # noqa: F401
 
 from .configentry import MyConfigEntry
@@ -87,14 +86,26 @@ class WebifConnection:
             if response.status != 200:
                 logging.debug(msg="Error: " & str(response.status))
                 return
-            logging.debug(msg=await response.text())
+            # logging.debug(msg=await response.text())
+            # print(await response.text())
             main_page = BeautifulSoup(
                 markup=await response.text(), features="html.parser"
             )
-            navs: Tag | NavigableString | None = main_page.find("div", class_="col-3")
-            values_nav = navs[2]
-            self._values["Info"] = {"Heizkreis": self.get_values(soup=values_nav)}
-            logging.debug(msg=self._values)
+            navs: Tag | NavigableString | None = main_page.findAll(
+                "div", class_="col-3"
+            )
+            # print(navs)
+
+            if len(navs) == 3:
+                values_nav = navs[2]
+                self._values["Info"] = {"Heizkreis": self.get_values(soup=values_nav)}
+                logging.debug(msg=self._values)
+                return self._values["Info"]["Heizkreis"]
+            else:
+                logging.debug("Update failed. return None")
+                print(await response.text())
+                print(navs)
+                return None
 
     def get_links(self, soup: BeautifulSoup) -> dict:
         """Return links from given nav container."""
@@ -121,7 +132,12 @@ class WebifConnection:
             # print(item.name)
             name = item.find("h5").text.strip()
             value = item.findAll(string=True, recursive=False)
-            values[name] = value[1].strip()
+            myValue = value[1].strip()
+            if len(myValue.split(" ")) > 1:
+                myNumber = myValue.split(" ")[0]
+                values[name] = myNumber
+            else:
+                values[name] = myValue
             # print(name + ": " + url)
             # link = link.find("a")
             # print(name + ":" + link)

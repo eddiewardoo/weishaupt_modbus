@@ -14,6 +14,7 @@ from .const import CONF_HK2, CONF_HK3, CONF_HK4, CONF_HK5, CONST, FORMATS, TYPES
 from .hpconst import DEVICES, PARAMS_STDTEMP
 from .items import ModbusItem
 from .modbusobject import ModbusAPI, ModbusObject
+from .webif_object import WebifConnection
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -188,13 +189,13 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
             # Name of the data. For logging purposes.
             name="My sensor",
             # Polling interval. Will only be polled if there are subscribers.
-            update_interval=timedelta(seconds=30),
+            update_interval=timedelta(seconds=60),
             # Set always_update to `False` if the data returned from the
             # api can be compared via `__eq__` to avoid duplicate updates
             # being dispatched to listeners
             always_update=True,
         )
-        self.my_api = config_entry.runtime_data.webif_api
+        self.my_api: WebifConnection = config_entry.runtime_data.webif_api
         # self._device: MyDevice | None = None
 
     async def _async_setup(self):
@@ -217,13 +218,13 @@ class MyWebIfCoordinator(DataUpdateCoordinator):
         try:
             # Note: asyncio.TimeoutError and aiohttp.ClientError are already
             # handled by the data update coordinator.
-            async with asyncio.timeout(10):
+            async with asyncio.timeout(30):
                 # Grab active context variables to limit data required to be fetched from API
                 # Note: using context is not required if there is no need or ability to limit
                 # data retrieved from API.
                 # listening_idx = set(self.async_contexts())
-                return await self.my_api.return_test_data()
-
+                # return await self.my_api.return_test_data()
+                return await self.my_api.get_info()
         except TimeoutError:
             logging.debug(msg="Timeout while fetching data")
         # except ApiAuthError as err:

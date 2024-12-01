@@ -1,8 +1,8 @@
 """init."""
 
 import json
-from pathlib import Path
 import logging
+from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_PREFIX, CONF_USERNAME
@@ -19,29 +19,28 @@ from .const import (
     CONF_NAME_DEVICE_PREFIX,
     CONF_NAME_TOPIC_PREFIX,
     CONST,
+    DEVICENAMES,
     FORMATS,
     TYPES,
 )
 from .hpconst import (
     DEVICELISTS,
-    MODBUS_HZ_ITEMS,
-    MODBUS_SYS_ITEMS,
-    MODBUS_ST_ITEMS,
-    MODBUS_WP_ITEMS,
-    MODBUS_WW_ITEMS,
-    MODBUS_W2_ITEMS,
-    MODBUS_IO_ITEMS,
     MODBUS_HZ2_ITEMS,
     MODBUS_HZ3_ITEMS,
     MODBUS_HZ4_ITEMS,
     MODBUS_HZ5_ITEMS,
+    MODBUS_HZ_ITEMS,
+    MODBUS_IO_ITEMS,
+    MODBUS_ST_ITEMS,
+    MODBUS_SYS_ITEMS,
+    MODBUS_W2_ITEMS,
+    MODBUS_WP_ITEMS,
+    MODBUS_WW_ITEMS,
 )
 from .items import ModbusItem, StatusItem
+from .migrate_helpers import migrate_entities
 from .modbusobject import ModbusAPI
 from .webif_object import WebifConnection
-from .configentry import MyConfigEntry, MyData
-from .migrate_helpers import migrate_entities
-from .const import DEVICENAMES
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -64,6 +63,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     mbapi = ModbusAPI(config_entry=entry)
     webapi = WebifConnection(config_entry=entry)
     await mbapi.connect()
+    await webapi.login()
     entry.runtime_data = MyData(
         modbus_api=mbapi, webif_api=webapi, config_dir=hass.config.config_dir, hass=hass
     )

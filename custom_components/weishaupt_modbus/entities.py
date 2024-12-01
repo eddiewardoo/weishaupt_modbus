@@ -457,7 +457,7 @@ class MyWebifSensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
 
     """
 
-    _webif_item = None
+    _api_item = None
     _attr_name = None
 
     _attr_native_unit_of_measurement = None
@@ -493,9 +493,14 @@ class MyWebifSensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        # print(self.coordinator.data)
-        self._attr_native_value = self.coordinator.data[self._api_item.name]
-        self.async_write_ha_state()
+        print(self.coordinator.data)
+        if self.coordinator.data is not None:
+            self._attr_native_value = self.coordinator.data[self._api_item.name]
+            self.async_write_ha_state()
+        else:
+            logging.warning(
+                "Update of %s failed. None response from server", self._api_item.name
+            )
 
     async def async_turn_on(self, **kwargs):
         """Turn the light on.
