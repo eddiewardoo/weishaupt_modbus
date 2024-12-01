@@ -10,7 +10,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .configentry import MyConfigEntry
 from .const import TYPES
 from .coordinator import MyCoordinator, MyWebIfCoordinator
-from .entities import MyWebifSensorEntity, build_entity_list
+from .entities import MyWebifSensorEntity
+from .entity_helpers import build_entity_list
 from .hpconst import DEVICELISTS, WEBIF_INFO_HEIZKREIS1
 
 logging.basicConfig()
@@ -23,18 +24,20 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    _modbus_api = config_entry.runtime_data.modbus_api
+    # _modbus_api = config_entry.runtime_data.modbus_api
 
     entries = []
 
+    coordinator = config_entry.runtime_data.coordinator
+
     for device in DEVICELISTS:
-        coordinator = MyCoordinator(
-            hass=hass,
-            my_api=_modbus_api,
-            api_items=device,
-            p_config_entry=config_entry,
-        )
-        await coordinator.async_config_entry_first_refresh()
+        # coordinator = MyCoordinator(
+        #    hass=hass,
+        #    my_api=_modbus_api,
+        #    api_items=device,
+        #    p_config_entry=config_entry,
+        # )
+        # await coordinator.async_config_entry_first_refresh()
         log.debug("Adding entries to entity list ..")
         entries = await build_entity_list(
             entries=entries,

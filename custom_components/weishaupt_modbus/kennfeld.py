@@ -12,7 +12,7 @@ from numpy.polynomial import Chebyshev
 from .configentry import MyConfigEntry
 
 # from scipy.interpolate import CubicSpline
-from .const import CONF_KENNFELD_FILE, CONST
+from .const import CONF, CONST
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -96,7 +96,7 @@ class PowerMap:
                 + "/custom_components/"
                 + CONST.DOMAIN
                 + "/"
-                + self._config_entry.data[CONF_KENNFELD_FILE]
+                + self._config_entry.data[CONF.KENNFELD_FILE]
             )
             async with aiofiles.open(filepath, encoding="utf-8") as openfile:
                 raw_block = await openfile.read()

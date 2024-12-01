@@ -1,30 +1,17 @@
-"""Build entitiy List and Update Coordinator."""
+"""Entity classes used in this integration"""
 
 import logging
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.components.select import SelectEntity
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
-from homeassistant.const import CONF_PORT, CONF_PREFIX
 from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .configentry import MyConfigEntry
-from .const import (
-    CONF_DEVICE_POSTFIX,
-    CONF_HK2,
-    CONF_HK3,
-    CONF_HK4,
-    CONF_HK5,
-    CONF_NAME_DEVICE_PREFIX,
-    CONF_NAME_TOPIC_PREFIX,
-    CONST,
-    DEVICES,
-    FORMATS,
-    TYPES,
-)
+from .const import CONF, CONST, FORMATS
 from .coordinator import MyCoordinator, MyWebIfCoordinator
 from .hpconst import reverse_device_list
 from .items import ModbusItem, WebItem
@@ -34,100 +21,6 @@ from .modbusobject import ModbusAPI, ModbusObject
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-
-
-async def check_available(modbus_item: ModbusItem, config_entry: MyConfigEntry) -> bool:
-    """function checks if item is valid and available
-
-    :param config_entry: HASS config entry
-    :type config_entry: MyConfigEntry
-    :param modbus_item: definition of modbus item
-    :type modbus_item: ModbusItem
-    """
-    log.debug("Check if item %s is available ..", modbus_item.name)
-    if config_entry.data[CONF_HK2] is False:
-        if modbus_item.device is DEVICES.HZ2:
-            return False
-
-    if config_entry.data[CONF_HK3] is False:
-        if modbus_item.device is DEVICES.HZ3:
-            return False
-
-    if config_entry.data[CONF_HK4] is False:
-        if modbus_item.device is DEVICES.HZ4:
-            return False
-
-    if config_entry.data[CONF_HK5] is False:
-        if modbus_item.device is DEVICES.HZ5:
-            return False
-
-    _modbus_api = config_entry.runtime_data.modbus_api
-    mbo = ModbusObject(_modbus_api, modbus_item)
-    _useless = await mbo.value
-    if modbus_item.is_invalid is False:
-        log.debug("Check availability item %s successful ..", modbus_item.name)
-        return True
-    return False
-
-
-async def build_entity_list(
-    entries,
-    config_entry: MyConfigEntry,
-    api_items: ModbusItem | WebItem,
-    item_type,
-    coordinator: MyCoordinator,
-):
-    """Build entity list.
-
-    function builds a list of entities that can be used as parameter by async_setup_entry()
-    type of list is defined by the ModbusItem's type flag
-    so the app only holds one list of entities that is build from a list of ModbusItem
-    stored in hpconst.py so far, will be provided by an external file in future
-
-    :param config_entry: HASS config entry
-    :type config_entry: MyConfigEntry
-    :param modbus_item: definition of modbus item
-    :type modbus_item: ModbusItem
-    :param item_type: type of modbus item
-    :type item_type: TYPES
-    :param coordinator: the update coordinator
-    :type coordinator: MyCoordinator
-    """
-    for index, item in enumerate(api_items):
-        if item.type == item_type:
-            if await check_available(item, config_entry=config_entry) is True:
-                log.debug("Add item %s to entity list ..", item.name)
-                match item_type:
-                    # here the entities are created with the parameters provided
-                    # by the ModbusItem object
-                    case TYPES.SENSOR | TYPES.NUMBER_RO:
-                        log.debug("Add item %s to entity list ..", item.name)
-                        entries.append(
-                            MySensorEntity(config_entry, item, coordinator, index)
-                        )
-                    case TYPES.SENSOR_CALC:
-                        pwrmap = PowerMap(config_entry)
-                        await pwrmap.initialize()
-                        log.debug("Add item %s to entity list ..", item.name)
-                        entries.append(
-                            MyCalcSensorEntity(
-                                config_entry,
-                                item,
-                                coordinator,
-                                index,
-                                pwrmap,
-                            )
-                        )
-                    case TYPES.SELECT:
-                        entries.append(
-                            MySelectEntity(config_entry, item, coordinator, index)
-                        )
-                    case TYPES.NUMBER:
-                        entries.append(
-                            MyNumberEntity(config_entry, item, coordinator, index)
-                        )
-
-    return entries
 
 
 class MyEntity(Entity):
@@ -142,15 +35,9 @@ class MyEntity(Entity):
     The base class for entities that hold general parameters
     """
 
-    _config_entry = None
-    _api_item = None
     _divider = 1
-    _attr_unique_id = ""
     _attr_should_poll = True
-    _attr_translation_key = ""
     _attr_has_entity_name = True
-    _dev_device = ""
-    _modbus_api = None
 
     def __init__(
         self,
@@ -162,19 +49,19 @@ class MyEntity(Entity):
         self._config_entry = config_entry
         self._api_item: ModbusItem | WebItem = api_item
 
-        dev_postfix = "_" + self._config_entry.data[CONF_DEVICE_POSTFIX]
+        dev_postfix = "_" + self._config_entry.data[CONF.DEVICE_POSTFIX]
 
         if dev_postfix == "_":
             dev_postfix = ""
 
-        dev_prefix = self._config_entry.data[CONF_PREFIX]
+        dev_prefix = self._config_entry.data[CONF.PREFIX]
 
-        if self._config_entry.data[CONF_NAME_DEVICE_PREFIX]:
+        if self._config_entry.data[CONF.NAME_DEVICE_PREFIX]:
             name_device_prefix = dev_prefix + "_"
         else:
             name_device_prefix = ""
 
-        if self._config_entry.data[CONF_NAME_TOPIC_PREFIX]:
+        if self._config_entry.data[CONF.NAME_TOPIC_PREFIX]:
             name_topic_prefix = reverse_device_list[self._api_item.device] + "_"
         else:
             name_topic_prefix = ""
@@ -419,7 +306,7 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         self._idx = idx
         MyEntity.__init__(self, config_entry, modbus_item, coordinator.modbus_api)
         self.async_internal_will_remove_from_hass_port = self._config_entry.data[
-            CONF_PORT
+            CONF.PORT
         ]
         # option list build from the status list of the ModbusItem
         self.options = []
@@ -482,18 +369,18 @@ class MyWebifSensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
         self._attr_name = api_item.name
 
         dev_prefix = CONST.DEF_PREFIX
-        dev_prefix = self._config_entry.data[CONF_PREFIX]
-        if self._config_entry.data[CONF_DEVICE_POSTFIX] == "_":
+        dev_prefix = self._config_entry.data[CONF.PREFIX]
+        if self._config_entry.data[CONF.DEVICE_POSTFIX] == "_":
             dev_postfix = ""
         else:
-            dev_postfix = self._config_entry.data[CONF_DEVICE_POSTFIX]
+            dev_postfix = self._config_entry.data[CONF.DEVICE_POSTFIX]
 
         self._attr_unique_id = dev_prefix + self._api_item.name + dev_postfix + "webif"
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        print(self.coordinator.data)
+        # print(self.coordinator.data)
         if self.coordinator.data is not None:
             self._attr_native_value = self.coordinator.data[self._api_item.name]
             self.async_write_ha_state()

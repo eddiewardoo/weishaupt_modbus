@@ -10,9 +10,8 @@ import aiohttp
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, ResultSet, Tag
 
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME  # noqa: F401
-
 from .configentry import MyConfigEntry
+from .const import CONF
 
 logging.basicConfig()
 log: logging.Logger = logging.getLogger(name=__name__)
@@ -38,9 +37,9 @@ class WebifConnection:
         Todo: Get info from config.
 
         """
-        self._ip = config_entry.data[CONF_HOST]
-        self._username = config_entry.data[CONF_USERNAME]
-        self._password = config_entry.data[CONF_PASSWORD]
+        self._ip = config_entry.data[CONF.HOST]
+        self._username = config_entry.data[CONF.USERNAME]
+        self._password = config_entry.data[CONF.PASSWORD]
         self._base_url = "http://" + self._ip
         self._config_entry = config_entry
 
@@ -48,17 +47,18 @@ class WebifConnection:
         """Log into the portal. Create cookie to stay logged in for the session."""
         jar = aiohttp.CookieJar(unsafe=True)
         self._session = aiohttp.ClientSession(base_url=self._base_url, cookie_jar=jar)
-
-        async with self._session.post(
-            "login.html",
-            data={"user": self._username, "pass": self._password},
-        ) as response:
-            if response.status == 200:
-                self._connected = True
-            else:
-                self._connected = False
-            # print(response.url)
-            # print(await response.text())
+        if self._username != "" and self._password != "":
+            async with self._session.post(
+                "login.html",
+                data={"user": self._username, "pass": self._password},
+            ) as response:
+                if response.status == 200:
+                    self._connected = True
+                else:
+                    self._connected = False
+        else:
+            logging.log("No user / password specified for webif")
+            self._connected = False
 
     async def return_test_data(self) -> dict[str, str]:
         """Return some values for testing."""
@@ -79,13 +79,14 @@ class WebifConnection:
 
     async def get_info(self) -> None:
         """Return Info -> Heizkreis1."""
-
+        if self._connected == False:
+            return None
         async with self._session.get(
             url="/settings_export.html?stack=0C00000100000000008000F9AF010002000301,0C000C1900000000000000F9AF020003000401"
         ) as response:
             if response.status != 200:
                 logging.debug(msg="Error: " & str(response.status))
-                return
+                return None
             # logging.debug(msg=await response.text())
             # print(await response.text())
             main_page = BeautifulSoup(
