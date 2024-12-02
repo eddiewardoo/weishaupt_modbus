@@ -17,6 +17,7 @@ class MyData:
     config_dir: str
     hass: HomeAssistant
     coordinator: any  # MyCoordinator
+    powermap: any
 
 
 type MyConfigEntry = ConfigEntry[MyData]

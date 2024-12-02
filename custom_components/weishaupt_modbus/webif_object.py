@@ -82,7 +82,7 @@ class WebifConnection:
         if self._connected == False:
             return None
         async with self._session.get(
-            url="/settings_export.html?stack=0C00000100000000008000F9AF010002000301,0C000C1900000000000000F9AF020003000401"
+            url="/settings_export.html?stack=0C000001000000000080000F4C010002000301,0C000C19000000000000000F4C020003000401"
         ) as response:
             if response.status != 200:
                 logging.debug(msg="Error: " & str(response.status))

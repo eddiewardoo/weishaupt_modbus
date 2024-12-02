@@ -694,10 +694,7 @@ IO_STATUS: list[StatusItem] = [
 # Description of physical units via the status list #
 #####################################################
 
-PARAMS_PERCENTAGE: dict = {
-    "min": 0,
-    "max": 100,
-}
+PARAMS_PERCENTAGE: dict = {"min": 0, "max": 100, "precision": 0}
 
 PARAMS_ROOMTEMP: dict = {
     "min": 16,
@@ -705,6 +702,7 @@ PARAMS_ROOMTEMP: dict = {
     "step": 0.5,
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
+    "precision": 1,
 }
 
 PARAMS_ROOMTEMP_LOW: dict = {
@@ -714,6 +712,8 @@ PARAMS_ROOMTEMP_LOW: dict = {
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "dynamic_max": "raum_soll_temp_normal",
+    "precision": 1,
+    "icon": "mdi:thermometer-low",
 }
 
 PARAMS_ROOMTEMP_MID: dict = {
@@ -724,6 +724,7 @@ PARAMS_ROOMTEMP_MID: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "dynamic_min": "raum_soll_temp_absenk",
     "dynamic_max": "raum_soll_temp_komf",
+    "precision": 1,
 }
 
 PARAMS_ROOMTEMP_HIGH: dict = {
@@ -733,6 +734,8 @@ PARAMS_ROOMTEMP_HIGH: dict = {
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "dynamic_min": "raum_soll_temp_normal",
+    "precision": 1,
+    "icon": "mdi:thermometer-high",
 }
 
 PARAMS_WATERTEMP: dict = {
@@ -741,6 +744,8 @@ PARAMS_WATERTEMP: dict = {
     "step": 0.5,
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
+    "precision": 1,
+    "icon": "mdi:thermometer-water",
 }
 
 PARAMS_WATERTEMP_LOW: dict = {
@@ -750,6 +755,8 @@ PARAMS_WATERTEMP_LOW: dict = {
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "dynamic_max": "ww_normal",
+    "precision": 1,
+    "icon": "mdi:thermometer-water",
 }
 
 PARAMS_WATERTEMP_HIGH: dict = {
@@ -759,6 +766,8 @@ PARAMS_WATERTEMP_HIGH: dict = {
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "dynamic_min": "ww_absenk",
+    "precision": 1,
+    "icon": "mdi:thermometer-water",
 }
 
 
@@ -768,6 +777,7 @@ PARAMS_SGREADYTEMP: dict = {
     "step": 0.5,
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
+    "precision": 1,
 }
 
 PARAMS_BIVALENZTEMP: dict = {
@@ -776,6 +786,7 @@ PARAMS_BIVALENZTEMP: dict = {
     "step": 0.5,
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
+    "precision": 1,
 }
 
 PARAMS_STDTEMP: dict = {
@@ -784,6 +795,7 @@ PARAMS_STDTEMP: dict = {
     "step": 0.5,
     "divider": 10,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
+    "precision": 1,
 }
 
 
@@ -792,6 +804,8 @@ PARAMS_HZKENNLINIE: dict = {
     "max": 1.5,
     "step": 0.05,
     "divider": 100,
+    "precision": 2,
+    "icon": "mdi:chart-line",
 }
 
 PARAMS_FLOWRATE: dict = {
@@ -799,12 +813,14 @@ PARAMS_FLOWRATE: dict = {
     "max": 5,
     "step": 0.1,
     "divider": 100,
+    "precision": 2,
 }
 
 PARAMS_ENERGY: dict = {
     "min": 0,
     "max": 999999999999,
     "deviceclass": SensorDeviceClass.ENERGY,
+    "precision": 0,
 }
 
 PARAMS_CALCPOWER: dict = {
@@ -815,6 +831,7 @@ PARAMS_CALCPOWER: dict = {
     "x2": "aussentemp",  # 30001,
     "deviceclass": SensorDeviceClass.POWER,
     "calculation_type": CALCTYPES.POWER,
+    "precision": 0,
 }
 
 PARAMS_CALCSPREIZUNG: dict = {
@@ -824,6 +841,7 @@ PARAMS_CALCSPREIZUNG: dict = {
     "diff_val": "rl_temp",  # 30001,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "calculation_type": CALCTYPES.DIFFERENCE,
+    "precision": 1,
 }
 
 
@@ -832,6 +850,7 @@ PARAMS_CALCTAZ: dict = {
     "max": 50,
     "denominator": "el_energie_heute",
     "calculation_type": CALCTYPES.QUOTIENT,
+    "precision": 2,
 }
 
 PARAMS_CALCTAZ2: dict = {
@@ -839,6 +858,7 @@ PARAMS_CALCTAZ2: dict = {
     "max": 50,
     "denominator": "el_energie_gestern",
     "calculation_type": CALCTYPES.QUOTIENT,
+    "precision": 2,
 }
 
 PARAMS_CALCMAZ: dict = {
@@ -846,6 +866,7 @@ PARAMS_CALCMAZ: dict = {
     "max": 50,
     "denominator": "el_energie_monat",
     "calculation_type": CALCTYPES.QUOTIENT,
+    "precision": 2,
 }
 
 PARAMS_CALCJAZ: dict = {
@@ -853,7 +874,15 @@ PARAMS_CALCJAZ: dict = {
     "max": 50,
     "denominator": "el_energie_jahr",
     "calculation_type": CALCTYPES.QUOTIENT,
+    "precision": 2,
 }
+
+PARAMS_ALERT: dict = {"icon": "mdi:alert"}
+
+PARAMS_OPMODE: dict = {"icon": "mdi:heat-pump"}
+
+PARAMS_PARTY: dict = {"icon": "mdi:glass-cocktail"}
+
 
 # pylint: disable=line-too-long
 
@@ -866,16 +895,16 @@ PARAMS_CALCJAZ: dict = {
 MODBUS_SYS_ITEMS: list[ModbusItem] = [
     ModbusItem( address=30001, name="Aussentemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.SYS, params=PARAMS_STDTEMP, translation_key="aussentemp"),
     ModbusItem( address=30002, name="Luftansaugtemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.SYS, params=PARAMS_STDTEMP, translation_key="luftansautgemp"),
-    ModbusItem( address=30003, name="Fehler", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_FEHLER, translation_key="fehler"),
-    ModbusItem( address=30004, name="Warnung", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_FEHLER, translation_key="warnung"), # same codes as for warnings
-    ModbusItem( address=30005, name="Fehlerfrei", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_FEHLERFREI, translation_key="fehlerfrei"),
-    ModbusItem( address=30006, name="Betriebsanzeige", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_BETRIEBSANZEIGE, translation_key="betriebsanzeige"),
-    ModbusItem( address=40001,  name="Systembetriebsart", mformat=FORMATS.STATUS, mtype=TYPES.SELECT, device=DEVICES.SYS, resultlist=SYS_BETRIEBSART, translation_key="systembetriebsart"),
+    ModbusItem( address=30003, name="Fehler", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_FEHLER, params=PARAMS_ALERT, translation_key="fehler"),
+    ModbusItem( address=30004, name="Warnung", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_FEHLER, params=PARAMS_ALERT, translation_key="warnung"), # same codes as for warnings
+    ModbusItem( address=30005, name="Fehlerfrei", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_FEHLERFREI, params=PARAMS_ALERT, translation_key="fehlerfrei"),
+    ModbusItem( address=30006, name="Betriebsanzeige", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.SYS, resultlist=SYS_BETRIEBSANZEIGE, params = PARAMS_OPMODE, translation_key="betriebsanzeige"),
+    ModbusItem( address=40001,  name="Systembetriebsart", mformat=FORMATS.STATUS, mtype=TYPES.SELECT, device=DEVICES.SYS, resultlist=SYS_BETRIEBSART, params = PARAMS_OPMODE, translation_key="systembetriebsart"),
 ]
 
 MODBUS_WP_ITEMS: list[ModbusItem] = [
-    ModbusItem( address=33101, name="Betrieb", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.WP, resultlist=HP_BETRIEB, translation_key="wp_betrieb"),
-    ModbusItem( address=33102, name="Störmeldung", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.WP, resultlist=HP_STOERMELDUNG, translation_key="wp_stoermeldung"),
+    ModbusItem( address=33101, name="Betrieb", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.WP, resultlist=HP_BETRIEB, params = PARAMS_OPMODE, translation_key="wp_betrieb"),
+    ModbusItem( address=33102, name="Störmeldung", mformat=FORMATS.STATUS, mtype=TYPES.SENSOR, device=DEVICES.WP, resultlist=HP_STOERMELDUNG, params=PARAMS_ALERT, translation_key="wp_stoermeldung"),
     ModbusItem( address=33103, name="Leistungsanforderung", mformat=FORMATS.PERCENTAGE, mtype=TYPES.SENSOR, device=DEVICES.WP, translation_key="leistungsanforderung"),
     ModbusItem( address=33103, name="Wärmeleistung", mformat=FORMATS.POWER, mtype=TYPES.SENSOR_CALC, device=DEVICES.WP, params=PARAMS_CALCPOWER, translation_key="waermeleistung"),
     ModbusItem( address=33104, name="Vorlauftemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WP, params=PARAMS_STDTEMP, translation_key="vl_temp"),
@@ -883,12 +912,12 @@ MODBUS_WP_ITEMS: list[ModbusItem] = [
     ModbusItem( address=33106, name="Verdampfungstemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WP, params=PARAMS_STDTEMP, translation_key="verdampfungs_temp"),
     ModbusItem( address=33107, name="Verdichtersauggastemp", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WP, params=PARAMS_STDTEMP, translation_key="verdichter_ansaug_gas_temp"),
     ModbusItem( address=33108, name="Weichentemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WP, params=PARAMS_STDTEMP, translation_key="weichen_temp"),
-    ModbusItem( address=33109, name="Anforderung(Vorlauf regenerativ)", mformat=FORMATS.PERCENTAGE, mtype=TYPES.SENSOR, device=DEVICES.WP, translation_key="anforderung_vl_regenerativ"),
+    ModbusItem( address=33109, name="Anforderung(Vorlauf regenerativ)", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WP, params=PARAMS_STDTEMP, translation_key="anforderung_vl_regenerativ"),
     ModbusItem( address=33110, name="Puffertemperatur?", mformat=FORMATS.UNKNOWN, mtype=TYPES.SENSOR, device=DEVICES.WP, translation_key="puffer_temp"),
     ModbusItem( address=33111, name="Vorlauftemperatur präzise(Summenvorlauf(B7))", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WP, params=PARAMS_STDTEMP, translation_key="vl_praeziese_summenvorlauf_b7"),
     ModbusItem( address=33111, name="Spreizung", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR_CALC, device=DEVICES.WP, params=PARAMS_CALCSPREIZUNG, translation_key="spreizung"),
 
-    ModbusItem( address=43101, name="Konfiguration", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.WP, resultlist=HP_KONFIGURATION, translation_key="wp_konf"),
+    ModbusItem( address=43101, name="Konfiguration", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.WP, resultlist=HP_KONFIGURATION, params = PARAMS_OPMODE, translation_key="wp_konf"),
     ModbusItem( address=43102, name="Ruhemodus", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.WP, resultlist=HP_RUHEMODUS, translation_key="ruhemodus"),
     ModbusItem( address=43103, name="Pumpe Einschaltart", mformat=FORMATS.NUMBER, mtype=TYPES.NUMBER_RO, device=DEVICES.WP, translation_key="pumpe_einschaltart"),
     ModbusItem( address=43104, name="Sollwert Pumpe Leistung Heizen", mformat=FORMATS.PERCENTAGE, mtype=TYPES.NUMBER_RO, device=DEVICES.WP, params=PARAMS_PERCENTAGE, translation_key="sollwert_pumpe_leistung_heizen"),
@@ -910,7 +939,7 @@ MODBUS_HZ_ITEMS = [
     ModbusItem( address=41101, name="HZ_Konfiguration", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.HZ, resultlist=HZ_KONFIGURATION, translation_key="hz_konf"),
     ModbusItem( address=41102, name="Anforderung Typ", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.HZ, resultlist=HZ_ANFORDERUNG, translation_key="anf_typ"),
     ModbusItem( address=41103, name="Betriebsart", mformat=FORMATS.STATUS, mtype=TYPES.SELECT, device=DEVICES.HZ, resultlist=HZ_BETRIEBSART, translation_key="hz_betriebsart"),
-    ModbusItem( address=41104, name="Pause / Party", mformat=FORMATS.STATUS, mtype=TYPES.SELECT, device=DEVICES.HZ, resultlist=HZ_PARTY_PAUSE, translation_key="party_pause"),
+    ModbusItem( address=41104, name="Pause / Party", mformat=FORMATS.STATUS, mtype=TYPES.SELECT, device=DEVICES.HZ, resultlist=HZ_PARTY_PAUSE, params = PARAMS_PARTY, translation_key="party_pause"),
     ModbusItem( address=41105, name="Raumsolltemperatur Komfort", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.HZ, params=PARAMS_ROOMTEMP_HIGH, translation_key="raum_soll_temp_komf"),
     ModbusItem( address=41106, name="Raumsolltemperatur Normal", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.HZ, params=PARAMS_ROOMTEMP_MID, translation_key="raum_soll_temp_normal"),
     ModbusItem( address=41107, name="Raumsolltemperatur Absenk", mformat=FORMATS.TEMPERATUR, mtype=TYPES.NUMBER, device=DEVICES.HZ, params=PARAMS_ROOMTEMP_LOW, translation_key="raum_soll_temp_absenk"),

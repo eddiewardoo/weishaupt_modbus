@@ -3,11 +3,11 @@
 from .const import TYPES, DeviceConstants, FormatConstants, TypeConstants
 
 
-# An item of a status, e.g. error code and error text along with a precise description
-# A class is intentionally defined here because the assignment via dictionaries would not work so elegantly in the end,
-# especially when searching backwards. (At least I don't know how...)
 class StatusItem:
-    """Status item class."""
+    """An item of a status, e.g. error code and error text along with a precise description
+    A class is intentionally defined here because the assignment via dictionaries would not work so elegantly in the end,
+    especially when searching backwards. (At least I don't know how...)
+    """
 
     _number = None
     _text = None

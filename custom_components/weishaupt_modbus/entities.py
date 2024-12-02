@@ -15,7 +15,6 @@ from .const import CONF, CONST, FORMATS, CALCTYPES
 from .coordinator import MyCoordinator, MyWebIfCoordinator
 from .hpconst import reverse_device_list
 from .items import ModbusItem, WebItem
-from .kennfeld import PowerMap
 from .migrate_helpers import create_unique_id
 from .modbusobject import ModbusAPI, ModbusObject
 
@@ -101,7 +100,15 @@ class MyEntity(Entity):
                 self._attr_native_step = self._api_item.params.get("step", 1)
                 self._divider = self._api_item.params.get("divider", 1)
                 self._attr_device_class = self._api_item.params.get("deviceclass", None)
-                self.set_min_max()
+                self._attr_suggested_display_precision = self._api_item.params.get(
+                    "precision", 2
+                )
+            self.set_min_max()
+
+        if self._api_item.params is not None:
+            icon = self._api_item.params.get("icon", None)
+            if icon is not None:
+                self._attr_icon = icon
 
     def set_min_max(self, onlydynamic: bool = False):
         """sets min max to fixed or dynamic values"""
@@ -138,23 +145,14 @@ class MyEntity(Entity):
         """Translate modbus value into sensful format."""
         if self._api_item.format == FORMATS.STATUS:
             return self._api_item.get_translation_key_from_number(val)
-        else:
-            if val is None:
-                return None
-            self.set_min_max(True)
-            return val / self._divider
 
-    # def retranslate_val(self, value) -> int:
-    #    """Re-translate modbus value into sensful format."""
-    #    if self._api_item.format == FORMATS.STATUS:
-    #        return self._api_item.get_number_from_translation_key(value)
-    #    else:
-    #        self.set_min_max()
-    #        return int(value * self._divider)
+        if val is None:
+            return None
+        self.set_min_max(True)
+        return val / self._divider
 
     async def set_translate_val(self, value) -> int:
         """Translate and writes a value to the modbus."""
-        val = None  # self.retranslate_val(value)
         if self._api_item.format == FORMATS.STATUS:
             val = self._api_item.get_number_from_translation_key(value)
         else:
@@ -189,11 +187,6 @@ class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
     Derived from Sensorentity
     and decorated with general parameters from MyEntity
     """
-
-    _attr_native_unit_of_measurement = None
-    _attr_device_class = None
-    _attr_state_class = None
-    _renamed = False
 
     def __init__(
         self,
@@ -236,7 +229,6 @@ class MyCalcSensorEntity(MySensorEntity):
         modbus_item: ModbusItem,
         coordinator: MyCoordinator,
         idx,
-        pwrmap: PowerMap,
     ) -> None:
         """Initialize MyCalcSensorEntity."""
         MySensorEntity.__init__(self, config_entry, modbus_item, coordinator, idx)
@@ -244,19 +236,13 @@ class MyCalcSensorEntity(MySensorEntity):
             self._calculation_type = self._api_item.params.get("calculation_type", None)
 
         if self._calculation_type == CALCTYPES.POWER:
-            self.my_map = pwrmap
+            self.my_map = config_entry.runtime_data.powermap
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
-
-    def calc_power(self, val, x, y):
-        """Calculate heating power from power map."""
-        if val is None:
-            return val
-        return (val / 100) * self.my_map.map(x, y)
 
     def translate_val(self, val):
         if val is None:
@@ -285,7 +271,10 @@ class MyCalcSensorEntity(MySensorEntity):
 
         match self._api_item.format:
             case FORMATS.POWER:
-                return round(self.calc_power(val_0, val_x, val_y))
+                return round(
+                    (val_0 / 100) * self.my_map.map(val_x, val_y),
+                    self._attr_suggested_display_precision,
+                )
             case _:
                 if val_0 is None:
                     return None
@@ -303,7 +292,7 @@ class MyCalcSensorEntity(MySensorEntity):
             return None
         if val_x == 0:
             return None
-        return val_0 / val_x
+        return round(val_0 / val_x, self._attr_suggested_display_precision)
 
     def diff_val(self, val):
         """Translate a value from the modbus."""
@@ -315,7 +304,9 @@ class MyCalcSensorEntity(MySensorEntity):
             return None
         if val_0 is None:
             return None
-        return val_0 - val_x / self._divider
+        return round(
+            val_0 - val_x / self._divider, self._attr_suggested_display_precision
+        )
 
 
 class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
@@ -324,12 +315,6 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
     Class that represents a sensor entity derived from Sensorentity
     and decorated with general parameters from MyEntity
     """
-
-    _attr_native_unit_of_measurement = None
-    _attr_device_class = None
-    _attr_state_class = None
-    _attr_native_min_value = 10
-    _attr_native_max_value = 60
 
     def __init__(
         self,
@@ -352,7 +337,6 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Send value over modbus and refresh HA."""
         self._api_item.state = await self.set_translate_val(value)
-        # self._api_item.state = int(self.retranslate_val(value))
         self._attr_native_value = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 
@@ -368,9 +352,6 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
     Class that represents a sensor entity derived from Sensorentity
     and decorated with general parameters from MyEntity
     """
-
-    options = []
-    _attr_current_option = "FEHLER"
 
     def __init__(
         self,
@@ -390,12 +371,11 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         self.options = []
         for _useless, item in enumerate(self._api_item._resultlist):
             self.options.append(item.translation_key)
+        self._attr_current_option = "FEHLER"
 
     async def async_select_option(self, option: str) -> None:
         """Write the selected option to modbus and refresh HA."""
-        # the synching is done by the ModbusObject of the entity
         self._api_item.state = await self.set_translate_val(option)
-        # self._api_item.state = int(self.retranslate_val(option))
         self._attr_current_option = self.translate_val(self._api_item.state)
         self.async_write_ha_state()
 

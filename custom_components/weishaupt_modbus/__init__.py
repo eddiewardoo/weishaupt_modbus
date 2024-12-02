@@ -27,6 +27,7 @@ from .hpconst import (
 from .items import ModbusItem, StatusItem
 from .migrate_helpers import migrate_entities
 from .modbusobject import ModbusAPI
+from .kennfeld import PowerMap
 from .webif_object import WebifConnection
 
 logging.basicConfig()
@@ -69,7 +70,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
         config_dir=hass.config.config_dir,
         hass=hass,
         coordinator=coordinator,
+        powermap=None,
     )
+
+    pwrmap = PowerMap(entry)
+    await pwrmap.initialize()
+    entry.runtime_data.powermap = pwrmap
 
     # myWebifCon = WebifConnection()
     # data = await myWebifCon.return_test_data()

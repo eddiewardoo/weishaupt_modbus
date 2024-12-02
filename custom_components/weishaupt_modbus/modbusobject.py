@@ -156,6 +156,7 @@ class ModbusObject:
     def validate_modbus_answer(self, mbr) -> int:
         """Check if there's a valid answer from modbus and
         translate it to a valid int depending from type
+
         :param mbr: The modbus response
         :type mbr: modbus response"""
         val = None

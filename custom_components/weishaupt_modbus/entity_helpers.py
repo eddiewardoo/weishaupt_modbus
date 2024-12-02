@@ -4,7 +4,6 @@ import logging
 from .configentry import MyConfigEntry
 from .items import ModbusItem, WebItem
 from .modbusobject import ModbusObject
-from .kennfeld import PowerMap
 from .const import DEVICES, CONF, TYPES
 from .coordinator import MyCoordinator
 from .entities import MySensorEntity, MyCalcSensorEntity, MyNumberEntity, MySelectEntity
@@ -84,8 +83,6 @@ async def build_entity_list(
                             MySensorEntity(config_entry, item, coordinator, index)
                         )
                     case TYPES.SENSOR_CALC:
-                        pwrmap = PowerMap(config_entry)
-                        await pwrmap.initialize()
                         log.debug("Add item %s to entity list ..", item.name)
                         entries.append(
                             MyCalcSensorEntity(
@@ -93,7 +90,6 @@ async def build_entity_list(
                                 item,
                                 coordinator,
                                 index,
-                                pwrmap,
                             )
                         )
                     case TYPES.SELECT:
