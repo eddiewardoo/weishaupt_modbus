@@ -440,7 +440,8 @@ class MyWebifSensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
         """Handle updated data from the coordinator."""
         # print(self.coordinator.data)
         if self.coordinator.data is not None:
-            self._attr_native_value = self.coordinator.data[self._api_item.name]
+            val = self._api_item.get_value(self.coordinator.data[self._api_item.name])
+            self._attr_native_value = val
             self.async_write_ha_state()
         else:
             logging.warning(

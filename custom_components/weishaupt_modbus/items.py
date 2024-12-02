@@ -1,10 +1,11 @@
 """Item classes."""
 
-from .const import TYPES, DeviceConstants, FormatConstants, TypeConstants
+from .const import TYPES, FORMATS, DeviceConstants, FormatConstants, TypeConstants
 
 
 class StatusItem:
-    """An item of a status, e.g. error code and error text along with a precise description
+    """An item of a status, e.g. error code and error text along with a precise description.
+
     A class is intentionally defined here because the assignment via dictionaries would not work so elegantly in the end,
     especially when searching backwards. (At least I don't know how...)
     """
@@ -271,6 +272,19 @@ class WebItem(ApiItem):
     def webif_group(self, val: str) -> None:
         """Set webif_group."""
         self._webif_group: str = val
+
+    def get_value(self, val):
+        if self._format in [
+            FORMATS.TEMPERATUR,
+            FORMATS.ENERGY,
+            FORMATS.POWER,
+            FORMATS.PERCENTAGE,
+            FORMATS.VOLUMENSTROM,
+            FORMATS.TIME_MIN,
+            FORMATS.TIME_H,
+        ]:
+            return val.split(" ")[0]
+        return val
 
 
 class ModbusItem(ApiItem):

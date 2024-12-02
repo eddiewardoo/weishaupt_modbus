@@ -57,19 +57,19 @@ async def async_setup_entry(
             coordinator=coordinator,
         )
 
-    #    webifcoordinator = MyWebIfCoordinator(hass=hass, config_entry=config_entry)
+        webifcoordinator = MyWebIfCoordinator(hass=hass, config_entry=config_entry)
 
     webifentries = []
 
-    #    for webifitem in WEBIF_INFO_HEIZKREIS1:
-    #        webifentries.append(  # noqa: PERF401
-    #            MyWebifSensorEntity(
-    #                config_entry=config_entry,
-    #                api_item=webifitem,
-    #                coordinator=webifcoordinator,
-    #                idx=1,
-    #            )
-    #        )
+    for webifitem in WEBIF_INFO_HEIZKREIS1:
+        webifentries.append(  # noqa: PERF401
+            MyWebifSensorEntity(
+                config_entry=config_entry,
+                api_item=webifitem,
+                coordinator=webifcoordinator,
+                idx=1,
+            )
+        )
 
     entries = entries + webifentries
     async_add_entities(
