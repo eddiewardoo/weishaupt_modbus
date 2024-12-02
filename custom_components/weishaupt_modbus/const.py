@@ -131,3 +131,15 @@ class DeviceNameConstants:
 
 
 DEVICENAMES = DeviceNameConstants()
+
+
+@dataclass(frozen=True)
+class CalcConstants:
+    """Main constants."""
+
+    POWER = "power"
+    QUOTIENT = "quotient"
+    DIFFERENCE = "difference"
+
+
+CALCTYPES = CalcConstants()

@@ -57,19 +57,12 @@ class MyCoordinator(DataUpdateCoordinator):
         modbus_item.state = await mbo.value
         return modbus_item.state
 
-    async def get_value_a(self, modbus_item: ModbusItem):
-        """Read a value from the modbus."""
-        mbo = ModbusObject(self._modbus_api, modbus_item)
-        if mbo is None:
-            return None
-        return await mbo.value
-
-    async def get_value_from_item(self, translation_key: str):
+    def get_value_from_item(self, translation_key: str) -> int:
         """Read a value from another modbus item"""
         for _useless, item in enumerate(self._modbusitems):
             if item.translation_key == translation_key:
                 return item.state
-        return item.state
+        return None
 
     async def check_configured(self, modbus_item: ModbusItem) -> bool:
         """Check if item is configured."""
@@ -122,44 +115,14 @@ class MyCoordinator(DataUpdateCoordinator):
                 match item.type:
                     # here the entities are created with the parameters provided
                     # by the ModbusItem object
-                    case TYPES.SENSOR | TYPES.NUMBER_RO | TYPES.NUMBER | TYPES.SELECT:
+                    case (
+                        TYPES.SENSOR
+                        | TYPES.NUMBER_RO
+                        | TYPES.NUMBER
+                        | TYPES.SELECT
+                        | TYPES.SENSOR_CALC
+                    ):
                         await self.get_value(item)
-                    case TYPES.SENSOR_CALC:
-                        r1 = await self.get_value_a(item)
-                        item_x = ModbusItem(
-                            address=item.params["x"],
-                            name="x",
-                            mformat=FORMATS.TEMPERATUR,
-                            mtype=TYPES.SENSOR_CALC,
-                            device=DEVICES.SYS,
-                            params=PARAMS_STDTEMP,
-                            translation_key="calc_sensor",
-                        )
-                        r2 = await self.get_value(item_x)
-                        if r2 is None:
-                            # use Aussentemperatur if Luftansaugtemperatur not available
-                            item_x = ModbusItem(
-                                address=item.params["x2"],
-                                name="x2",
-                                mformat=FORMATS.TEMPERATUR,
-                                mtype=TYPES.SENSOR_CALC,
-                                device=DEVICES.SYS,
-                                params=PARAMS_STDTEMP,
-                                translation_key="calc_sensor",
-                            )
-                            r2 = await self.get_value(item_x)
-                        item_y = ModbusItem(
-                            address=item.params["y"],
-                            name="y",
-                            mformat=FORMATS.TEMPERATUR,
-                            mtype=TYPES.SENSOR_CALC,
-                            device=DEVICES.WP,
-                            params=PARAMS_STDTEMP,
-                            translation_key="calc_sensor",
-                        )
-                        r3 = await self.get_value(item_y)
-
-                        item.state = [r1, r2, r3]
 
     async def _async_update_data(self):
         """Fetch data from API endpoint.

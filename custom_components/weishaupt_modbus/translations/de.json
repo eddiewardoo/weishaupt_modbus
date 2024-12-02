@@ -1548,6 +1548,22 @@
                     "hp_stoerungsfrei": "Störungsfrei"
                 }
             },
+            "tagesarbeitszahl_heute": {
+                "name": "{prefix}Tagesarbeitszahl heute"
+            },
+            "spreizung": {
+                "name": "{prefix}Spreizung"
+            },
+
+            "jahresarbeitszahl": {
+                "name": "{prefix}Jahresarbeitszahl"
+            },
+            "tagesarbeitszahl_gestern": {
+                "name": "{prefix}Tagesarbeitszahl gestern"
+            },
+            "monatsarbeitszahl": {
+                "name": "{prefix}Monatsarbeitszahl"
+            },
             "ww_energie_gestern": {
                 "name": "{prefix}Warmwasser Energie gestern"
             },

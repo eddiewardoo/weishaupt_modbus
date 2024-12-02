@@ -57,7 +57,7 @@ class WebifConnection:
                 else:
                     self._connected = False
         else:
-            logging.log("No user / password specified for webif")
+            log.warning("No user / password specified for webif")
             self._connected = False
 
     async def return_test_data(self) -> dict[str, str]:

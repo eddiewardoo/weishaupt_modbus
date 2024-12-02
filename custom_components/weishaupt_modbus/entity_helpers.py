@@ -70,6 +70,7 @@ async def build_entity_list(
     :param coordinator: the update coordinator
     :type coordinator: MyCoordinator
     """
+
     for index, item in enumerate(api_items):
         if item.type == item_type:
             if await check_available(item, config_entry=config_entry) is True:
