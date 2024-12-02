@@ -1081,8 +1081,8 @@ WEBIF_INFO_HEIZKREIS1: list[WebItem] = [
     WebItem(name="Raumsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_raumsolltemperatur"),
     WebItem(name="Vorlaufsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_vorlaufsolltemperatur"),
     WebItem(name="Vorlauftemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.WIH, webif_group="WIH", translation_key="webif_info_heizkreis1_vorlauftemperatur"),
-
 ]
+
 DEVICELISTS: list = [
     MODBUS_SYS_ITEMS,
     MODBUS_WP_ITEMS,
