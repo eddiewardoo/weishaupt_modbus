@@ -48,14 +48,18 @@ class WebifConnection:
         jar = aiohttp.CookieJar(unsafe=True)
         self._session = aiohttp.ClientSession(base_url=self._base_url, cookie_jar=jar)
         if self._username != "" and self._password != "":
-            async with self._session.post(
-                "login.html",
-                data={"user": self._username, "pass": self._password},
-            ) as response:
-                if response.status == 200:
-                    self._connected = True
-                else:
-                    self._connected = False
+            try:
+                async with self._session.post(
+                    "/login.html",
+                    data={"user": self._username, "pass": self._password},
+                ) as response:
+                    if response.status == 200:
+                        self._connected = True
+                    else:
+                        self._connected = False
+            except TimeoutError:
+                self._connected = False
+                logging.debug(msg="Timeout while logging in")
         else:
             log.warning("No user / password specified for webif")
             self._connected = False
@@ -81,32 +85,38 @@ class WebifConnection:
         """Return Info -> Heizkreis1."""
         if self._connected is False:
             return None
-        async with self._session.get(
-            url="/settings_export.html?stack=0C00000100000000008000F9AF010002000301,0C000C1900000000000000F9AF020003000401"
-        ) as response:
-            if response.status != 200:
-                logging.debug(msg="Error: " & str(response.status))
-                return None
-            # logging.debug(msg=await response.text())
-            # print(await response.text())
-            main_page = BeautifulSoup(
-                markup=await response.text(), features="html.parser"
-            )
-            navs: Tag | NavigableString | None = main_page.findAll(
-                "div", class_="col-3"
-            )
-            # print(navs)
+        try:
+            async with self._session.get(
+                url="/settings_export.html?stack=0C00000100000000008000F9AF010002000301,0C000C1900000000000000F9AF020003000401"
+            ) as response:
+                if response.status != 200:
+                    logging.debug(msg="Error: " & str(response.status))
+                    return None
+                # logging.debug(msg=await response.text())
+                # print(await response.text())
+                main_page = BeautifulSoup(
+                    markup=await response.text(), features="html.parser"
+                )
+                navs: Tag | NavigableString | None = main_page.findAll(
+                    "div", class_="col-3"
+                )
+                # print(navs)
 
-            if len(navs) == 3:
-                values_nav = navs[2]
-                self._values["Info"] = {"Heizkreis": self.get_values(soup=values_nav)}
-                logging.debug(msg=self._values)
-                return self._values["Info"]["Heizkreis"]
-            else:
-                logging.debug("Update failed. return None")
-                print(await response.text())
-                print(navs)
-                return None
+                if len(navs) == 3:
+                    values_nav = navs[2]
+                    self._values["Info"] = {
+                        "Heizkreis": self.get_values(soup=values_nav)
+                    }
+                    logging.debug(msg=self._values)
+                    return self._values["Info"]["Heizkreis"]
+                else:
+                    logging.debug("Update failed. return None")
+                    print(await response.text())
+                    print(navs)
+                    return None
+        except TimeoutError:
+            logging.debug(msg="Timeout while getting info")
+            return None
 
     async def get_info_wp(self) -> None:
         """Return Info -> Heizkreis1."""
