@@ -140,7 +140,7 @@ class MyCoordinator(DataUpdateCoordinator):
             # data retrieved from API.
             try:
                 listening_idx = set(self.async_contexts())
-                return await self.fetch_data(listening_idx)
+                return await self.fetch_data() #listening_idx)
             except ModbusException:
                 log.warning("connection to the heatpump failed")
 
