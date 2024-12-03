@@ -55,7 +55,7 @@ class MyCoordinator(DataUpdateCoordinator):
         if mbo is None:
             modbus_item.state = None
         modbus_item.state = await mbo.value
-        log.debug("Get value:%s from item:%s",str(item.state), item.translation_key)
+        log.debug("Get value:%s from item:%s",str(modbus_item.state), modbus_item.translation_key)
         return modbus_item.state
 
     def get_value_from_item(self, translation_key: str) -> int:
