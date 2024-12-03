@@ -183,7 +183,7 @@ class ModbusObject:
             val = self.check_valid_result(mbr.registers[0])
             log.debug(
                 "Item %s val=%d and invalid = %s",
-                self._modbus_item.name,
+                self._modbus_item.translation_key,
                 val,
                 self._modbus_item.is_invalid,
             )
