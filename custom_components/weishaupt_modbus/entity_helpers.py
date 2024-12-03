@@ -20,7 +20,7 @@ async def check_available(modbus_item: ModbusItem, config_entry: MyConfigEntry) 
     :param modbus_item: definition of modbus item
     :type modbus_item: ModbusItem
     """
-    log.debug("Check if item %s is available ..", modbus_item.name)
+    log.debug("Check if item %s is available ..", modbus_item.translation_key)
     if config_entry.data[CONF.HK2] is False:
         if modbus_item.device is DEVICES.HZ2:
             return False
@@ -41,7 +41,7 @@ async def check_available(modbus_item: ModbusItem, config_entry: MyConfigEntry) 
     mbo = ModbusObject(_modbus_api, modbus_item)
     _useless = await mbo.value
     if modbus_item.is_invalid is False:
-        log.debug("Check availability item %s successful ..", modbus_item.name)
+        log.debug("Check availability item %s successful ..", modbus_item.translation_key)
         return True
     return False
 
@@ -73,17 +73,17 @@ async def build_entity_list(
     for index, item in enumerate(api_items):
         if item.type == item_type:
             if await check_available(item, config_entry=config_entry) is True:
-                log.debug("Add item %s to entity list ..", item.name)
+                log.debug("Add item %s to entity list ..", item.translation_key)
                 match item_type:
                     # here the entities are created with the parameters provided
                     # by the ModbusItem object
                     case TYPES.SENSOR | TYPES.NUMBER_RO:
-                        log.debug("Add item %s to entity list ..", item.name)
+                        log.debug("Add item %s to entity list ..", item.translation_key)
                         entries.append(
                             MySensorEntity(config_entry, item, coordinator, index)
                         )
                     case TYPES.SENSOR_CALC:
-                        log.debug("Add item %s to entity list ..", item.name)
+                        log.debug("Add item %s to entity list ..", item.translation_key)
                         entries.append(
                             MyCalcSensorEntity(
                                 config_entry,
@@ -93,10 +93,12 @@ async def build_entity_list(
                             )
                         )
                     case TYPES.SELECT:
+                        log.debug("Add item %s to entity list ..", item.translation_key)
                         entries.append(
                             MySelectEntity(config_entry, item, coordinator, index)
                         )
                     case TYPES.NUMBER:
+                        log.debug("Add item %s to entity list ..", item.translation_key)
                         entries.append(
                             MyNumberEntity(config_entry, item, coordinator, index)
                         )
