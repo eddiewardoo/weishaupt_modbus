@@ -9,12 +9,6 @@ from homeassistant.const import (
     CONF_PASSWORD,
     CONF_PREFIX,
     CONF_USERNAME,
-    PERCENTAGE,
-    UnitOfEnergy,
-    UnitOfPower,
-    UnitOfTemperature,
-    UnitOfTime,
-    UnitOfVolumeFlowRate,
 )
 
 
@@ -60,17 +54,17 @@ CONST = MainConstants()
 class FormatConstants:
     """Format constants."""
 
-    TEMPERATUR = UnitOfTemperature.CELSIUS
-    ENERGY = UnitOfEnergy.KILO_WATT_HOUR
-    POWER = UnitOfPower.WATT
-    PERCENTAGE = PERCENTAGE
-    NUMBER = ""
-    STATUS = "Status"
-    VOLUMENSTROM = UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR
-    KENNLINIE = " "  # has to be different from NUMBER we'd have to separate unit strings and format...
-    TIME_MIN = UnitOfTime.MINUTES
-    TIME_H = UnitOfTime.HOURS
-    UNKNOWN = "?"
+    TEMPERATUR = "temperature"
+    ENERGY = "energy"
+    POWER = "power"
+    PERCENTAGE = "percentage"
+    NUMBER = "number"
+    STATUS = "status"
+    VOLUMENSTROM = "flowrate"
+    KENNLINIE = "kennlinie"
+    TIME_MIN = "minutes"
+    TIME_H = "hours"
+    UNKNOWN = "unknown"
 
 
 FORMATS = FormatConstants()

@@ -32,7 +32,6 @@ async def async_setup_entry(
     coordinator = config_entry.runtime_data.coordinator
 
     for device in DEVICELISTS:
-        log.debug("Adding entries to entity list ..")
         entries = await build_entity_list(
             entries=entries,
             config_entry=config_entry,

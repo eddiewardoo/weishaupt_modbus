@@ -49,7 +49,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     # with your actual devices.
     # hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hub.Hub(hass, entry.data["host"])
     mbapi = ModbusAPI(config_entry=entry)
-    await mbapi.connect()
 
     if entry.data[CONF.CB_WEBIF]:
         print
@@ -156,6 +155,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: MyConfigEntry):
         new_data[CONF.NAME_TOPIC_PREFIX] = False
 
     if config_entry.version < 5:
+        new_data[CONF.CB_WEBIF] = False
         new_data[CONF.USERNAME] = ""
         new_data[CONF.PASSWORD] = ""
         hass.config_entries.async_update_entry(

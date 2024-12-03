@@ -80,23 +80,19 @@ class MyEntity(Entity):
 
         self._modbus_api = modbus_api
 
-        if self._api_item.format != FORMATS.STATUS:
-            self._attr_native_unit_of_measurement = self._api_item.format
-
+        if self._api_item.format == FORMATS.STATUS:
+            self._divider = 1
+        else:
             match self._api_item.format:
                 case FORMATS.ENERGY:
                     self._attr_state_class = SensorStateClass.TOTAL_INCREASING
-                case (
-                    FORMATS.TEMPERATUR
-                    | FORMATS.POWER
-                    | FORMATS.PERCENTAGE
-                    | FORMATS.TIME_H
-                    | FORMATS.TIME_MIN
-                    | FORMATS.UNKNOWN
-                ):
+                case _:
                     self._attr_state_class = SensorStateClass.MEASUREMENT
 
             if self._api_item.params is not None:
+                self._attr_native_unit_of_measurement = self._api_item.params.get(
+                    "unit", ""
+                )
                 self._attr_native_step = self._api_item.params.get("step", 1)
                 self._divider = self._api_item.params.get("divider", 1)
                 self._attr_device_class = self._api_item.params.get("deviceclass", None)
@@ -204,7 +200,6 @@ class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = self.translate_val(self._api_item.state)
-        log.debug("Entity update val:%s item:%s",str(self._attr_native_value), self._api_item.translation_key)
         self.async_write_ha_state()
 
     @property
@@ -243,7 +238,6 @@ class MyCalcSensorEntity(MySensorEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = self.translate_val(self._api_item.state)
-        log.debug("Entity update val:%s item:%s",str(self._attr_native_value), self._api_item.translation_key)
         self.async_write_ha_state()
 
     def translate_val(self, val):
@@ -334,7 +328,6 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = self.translate_val(self._api_item.state)
-        log.debug("Entity update val:%s item:%s",str(self._attr_native_value), self._api_item.translation_key)
         self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
@@ -380,7 +373,6 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         """Write the selected option to modbus and refresh HA."""
         self._api_item.state = await self.set_translate_val(option)
         self._attr_current_option = self.translate_val(self._api_item.state)
-        log.debug("Entity update opt:%s item:%s",str(self._attr_current_option), self._api_item.translation_key)
         self.async_write_ha_state()
 
     @callback
