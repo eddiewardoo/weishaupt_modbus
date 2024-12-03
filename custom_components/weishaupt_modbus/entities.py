@@ -204,6 +204,7 @@ class MySensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = self.translate_val(self._api_item.state)
+        log.debug("Entity update val:%s item:%s",str(self._attr_native_value), self._api_item.translation_key)
         self.async_write_ha_state()
 
     @property
@@ -242,6 +243,7 @@ class MyCalcSensorEntity(MySensorEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = self.translate_val(self._api_item.state)
+        log.debug("Entity update val:%s item:%s",str(self._attr_native_value), self._api_item.translation_key)
         self.async_write_ha_state()
 
     def translate_val(self, val):
@@ -332,6 +334,7 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = self.translate_val(self._api_item.state)
+        log.debug("Entity update val:%s item:%s",str(self._attr_native_value), self._api_item.translation_key)
         self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:
@@ -377,6 +380,7 @@ class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
         """Write the selected option to modbus and refresh HA."""
         self._api_item.state = await self.set_translate_val(option)
         self._attr_current_option = self.translate_val(self._api_item.state)
+        log.debug("Entity update opt:%s item:%s",str(self._attr_current_option), self._api_item.translation_key)
         self.async_write_ha_state()
 
     @callback
