@@ -33,6 +33,7 @@ class ConfConstants:
     HK5 = "Heizkreis 5"
     NAME_DEVICE_PREFIX = "Name-Device-Prefix"
     NAME_TOPIC_PREFIX = "Name-Topic-Prefix"
+    CB_WEBIF = "enable-webif"
     PASSWORD = CONF_PASSWORD
     USERNAME = CONF_USERNAME
 

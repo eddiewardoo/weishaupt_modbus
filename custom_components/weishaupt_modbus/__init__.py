@@ -25,9 +25,9 @@ from .hpconst import (
     MODBUS_WW_ITEMS,
 )
 from .items import ModbusItem, StatusItem
+from .kennfeld import PowerMap
 from .migrate_helpers import migrate_entities
 from .modbusobject import ModbusAPI
-from .kennfeld import PowerMap
 from .webif_object import WebifConnection
 
 logging.basicConfig()
@@ -49,10 +49,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     # with your actual devices.
     # hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hub.Hub(hass, entry.data["host"])
     mbapi = ModbusAPI(config_entry=entry)
-    webapi = None
-    #webapi = WebifConnection(config_entry=entry)
     await mbapi.connect()
-    #await webapi.login()
+
+    if entry.data[CONF.CB_WEBIF]:
+        print
+        webapi = WebifConnection(config_entry=entry)
+        await webapi.login()
+    else:
+        webapi = None
 
     itemlist = []
 

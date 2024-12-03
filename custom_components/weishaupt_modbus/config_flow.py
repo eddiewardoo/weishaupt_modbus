@@ -102,6 +102,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                 vol.Optional(schema=CONF.HK5, default=False): bool,
                 vol.Optional(schema=CONF.NAME_DEVICE_PREFIX, default=False): bool,
                 vol.Optional(schema=CONF.NAME_TOPIC_PREFIX, default=False): bool,
+                vol.Optional(schema=CONF.CB_WEBIF, default=False): bool,
                 vol.Optional(schema=CONF.USERNAME, default=""): str,
                 vol.Optional(schema=CONF.PASSWORD, default=""): str,
             }
@@ -176,6 +177,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=CONST.DOMAIN):
                 vol.Optional(
                     schema=CONF.NAME_TOPIC_PREFIX,
                     default=reconfigure_entry.data[CONF.NAME_TOPIC_PREFIX],
+                ): bool,
+                vol.Optional(
+                    schema=CONF.CB_WEBIF, default=reconfigure_entry.data[CONF.CB_WEBIF]
                 ): bool,
                 vol.Optional(
                     schema=CONF.USERNAME, default=reconfigure_entry.data[CONF.USERNAME]

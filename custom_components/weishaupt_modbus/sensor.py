@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .configentry import MyConfigEntry
-from .const import TYPES
+from .const import CONF, TYPES
 from .coordinator import MyWebIfCoordinator
 from .entities import MyWebifSensorEntity
 from .entity_helpers import build_entity_list
@@ -57,21 +57,21 @@ async def async_setup_entry(
             coordinator=coordinator,
         )
 
+    webifentries = []
+
+    if config_entry.data[CONF.CB_WEBIF]:
         webifcoordinator = MyWebIfCoordinator(hass=hass, config_entry=config_entry)
+        for webifitem in WEBIF_INFO_HEIZKREIS1:
+            webifentries.append(  # noqa: PERF401
+                MyWebifSensorEntity(
+                    config_entry=config_entry,
+                    api_item=webifitem,
+                    coordinator=webifcoordinator,
+                    idx=1,
+                )
+            )
 
-#   webifentries = []
-
-#    for webifitem in WEBIF_INFO_HEIZKREIS1:
-#        webifentries.append(  # noqa: PERF401
-#            MyWebifSensorEntity(
-#                config_entry=config_entry,
-#                api_item=webifitem,
-#                coordinator=webifcoordinator,
-#                idx=1,
-#            )
-#        )
-
-#    entries = entries + webifentries
+    #    entries = entries + webifentries
     async_add_entities(
         entries,
         update_before_add=True,

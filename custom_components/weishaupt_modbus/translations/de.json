@@ -21,7 +21,8 @@
                     "Name-Device-Prefix": "Name Device Prefix",
                     "Name-Topic-Prefix": "Name Topic Prefix",
                     "Port": "Port",
-                    "Prefix": "Prefix"
+                    "Prefix": "Prefix",
+                    "enable-webif": "experimentelles WebIf aktivieren?"
                 }
             }
         }
@@ -1554,7 +1555,6 @@
             "spreizung": {
                 "name": "{prefix}Spreizung"
             },
-
             "jahresarbeitszahl": {
                 "name": "{prefix}Jahresarbeitszahl"
             },
