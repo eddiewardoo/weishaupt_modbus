@@ -1,7 +1,7 @@
 """Heatpump constants."""
 
 import copy
-from homeassistant.components.sensor import SensorDeviceClass
+from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
     UnitOfTime,
     UnitOfEnergy,
@@ -711,6 +711,7 @@ PARAMS_ROOMTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_ROOMTEMP_LOW: dict = {
@@ -723,6 +724,7 @@ PARAMS_ROOMTEMP_LOW: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-low",
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_ROOMTEMP_MID: dict = {
@@ -735,6 +737,7 @@ PARAMS_ROOMTEMP_MID: dict = {
     "dynamic_max": "raum_soll_temp_komf",
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_ROOMTEMP_HIGH: dict = {
@@ -747,6 +750,7 @@ PARAMS_ROOMTEMP_HIGH: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-high",
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_WATERTEMP: dict = {
@@ -758,6 +762,7 @@ PARAMS_WATERTEMP: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-water",
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_WATERTEMP_LOW: dict = {
@@ -770,6 +775,7 @@ PARAMS_WATERTEMP_LOW: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-water",
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_WATERTEMP_HIGH: dict = {
@@ -782,6 +788,7 @@ PARAMS_WATERTEMP_HIGH: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-water",
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 
@@ -793,6 +800,7 @@ PARAMS_SGREADYTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_BIVALENZTEMP: dict = {
@@ -803,6 +811,7 @@ PARAMS_BIVALENZTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_STDTEMP: dict = {
@@ -813,6 +822,7 @@ PARAMS_STDTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 
@@ -823,6 +833,7 @@ PARAMS_HZKENNLINIE: dict = {
     "divider": 100,
     "precision": 2,
     "icon": "mdi:chart-line",
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_FLOWRATE: dict = {
@@ -832,6 +843,7 @@ PARAMS_FLOWRATE: dict = {
     "divider": 100,
     "precision": 2,
     "unit": UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_ENERGY: dict = {
@@ -840,6 +852,7 @@ PARAMS_ENERGY: dict = {
     "deviceclass": SensorDeviceClass.ENERGY,
     "precision": 0,
     "unit": UnitOfEnergy.KILO_WATT_HOUR,
+    "stateclass": SensorStateClass.TOTAL_INCREASING,   
 }
 
 PARAMS_CALCPOWER: dict = {
@@ -852,6 +865,7 @@ PARAMS_CALCPOWER: dict = {
     "calculation_type": CALCTYPES.POWER,
     "precision": 0,
     "unit": UnitOfPower.WATT,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 PARAMS_CALCSPREIZUNG: dict = {
@@ -863,6 +877,7 @@ PARAMS_CALCSPREIZUNG: dict = {
     "calculation_type": CALCTYPES.DIFFERENCE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
+    "stateclass": SensorStateClass.MEASUREMENT,   
 }
 
 
@@ -872,6 +887,8 @@ PARAMS_CALCTAZ: dict = {
     "denominator": "el_energie_heute",
     "calculation_type": CALCTYPES.QUOTIENT,
     "precision": 2,
+    "stateclass": SensorStateClass.MEASUREMENT, 
+    "icon": "mdi:sigma",
 }
 
 PARAMS_CALCTAZ2: dict = {
@@ -880,6 +897,8 @@ PARAMS_CALCTAZ2: dict = {
     "denominator": "el_energie_gestern",
     "calculation_type": CALCTYPES.QUOTIENT,
     "precision": 2,
+    "stateclass": SensorStateClass.MEASUREMENT,   
+    "icon": "mdi:sigma",
 }
 
 PARAMS_CALCMAZ: dict = {
@@ -888,6 +907,8 @@ PARAMS_CALCMAZ: dict = {
     "denominator": "el_energie_monat",
     "calculation_type": CALCTYPES.QUOTIENT,
     "precision": 2,
+    "stateclass": SensorStateClass.MEASUREMENT,   
+    "icon": "mdi:sigma",
 }
 
 PARAMS_CALCJAZ: dict = {
@@ -896,6 +917,8 @@ PARAMS_CALCJAZ: dict = {
     "denominator": "el_energie_jahr",
     "calculation_type": CALCTYPES.QUOTIENT,
     "precision": 2,
+    "stateclass": SensorStateClass.MEASUREMENT,   
+    "icon": "mdi:sigma",
 }
 
 PARAMS_ALERT: dict = {"icon": "mdi:alert"}
