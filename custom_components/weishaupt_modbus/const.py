@@ -55,15 +55,9 @@ class FormatConstants:
     """Format constants."""
 
     TEMPERATUR = "temperature"
-    ENERGY = "energy"
-    POWER = "power"
     PERCENTAGE = "percentage"
     NUMBER = "number"
     STATUS = "status"
-    VOLUMENSTROM = "flowrate"
-    KENNLINIE = "kennlinie"
-    TIME_MIN = "minutes"
-    TIME_H = "hours"
     UNKNOWN = "unknown"
 
 
