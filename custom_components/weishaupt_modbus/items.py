@@ -287,12 +287,7 @@ class WebItem(ApiItem):
     def get_value(self, val):
         if self._format in [
             FORMATS.TEMPERATUR,
-            FORMATS.ENERGY,
-            FORMATS.POWER,
             FORMATS.PERCENTAGE,
-            FORMATS.VOLUMENSTROM,
-            FORMATS.TIME_MIN,
-            FORMATS.TIME_H,
         ]:
             return val.split(" ")[0]
         return val
