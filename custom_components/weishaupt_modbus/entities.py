@@ -83,13 +83,9 @@ class MyEntity(Entity):
         if self._api_item.format == FORMATS.STATUS:
             self._divider = 1
         else:
-            match self._api_item.format:
-                case FORMATS.ENERGY:
-                    self._attr_state_class = SensorStateClass.TOTAL_INCREASING
-                case _:
-                    self._attr_state_class = SensorStateClass.MEASUREMENT
-
             if self._api_item.params is not None:
+                self._attr_state_class = self._api_item.params.get(
+                    "stateclass",SensorStateClass.MEASUREMENT)
                 self._attr_native_unit_of_measurement = self._api_item.params.get(
                     "unit", ""
                 )
@@ -264,17 +260,10 @@ class MyCalcSensorEntity(MySensorEntity):
         )
         if val_y is None:
             return None
-
-        match self._api_item.format:
-            case FORMATS.POWER:
-                return round(
-                    (val_0 / 100) * self.my_map.map(val_x, val_y),
-                    self._attr_suggested_display_precision,
-                )
-            case _:
-                if val_0 is None:
-                    return None
-                return val_0
+        return round(
+            (val_0 / 100) * self.my_map.map(val_x, val_y),
+            self._attr_suggested_display_precision,
+        )
 
     def quotient_val(self, val):
         """Translate a value from the modbus."""
