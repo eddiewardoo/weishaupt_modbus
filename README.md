@@ -1,4 +1,4 @@
-# 1.0.5pre
+# 1.0.5pre4
 - more calculated sensors supported. This is now be done internally by eval() so that future enhancements are easier
 - for interpolation of the heating power map now more precise cubic splines are used when scipy is installed on the platform. Scipy is not listed as requirement, since this was causing issues in past. So if you want to use more precise interpolation, please install scipy manually by "pip install scipy".
 - specific icons are used for some entities, to be completed in future
