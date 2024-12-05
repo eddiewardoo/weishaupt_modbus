@@ -11,7 +11,7 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .configentry import MyConfigEntry
-from .const import CONF, CONST, FORMATS, CALCTYPES
+from .const import CONF, CONST, FORMATS
 from .coordinator import MyCoordinator, MyWebIfCoordinator
 from .hpconst import reverse_device_list
 from .items import ModbusItem, WebItem
@@ -85,7 +85,8 @@ class MyEntity(Entity):
         else:
             if self._api_item.params is not None:
                 self._attr_state_class = self._api_item.params.get(
-                    "stateclass",SensorStateClass.MEASUREMENT)
+                    "stateclass", SensorStateClass.MEASUREMENT
+                )
                 self._attr_native_unit_of_measurement = self._api_item.params.get(
                     "unit", ""
                 )
@@ -212,8 +213,8 @@ class MyCalcSensorEntity(MySensorEntity):
     """
 
     # calculates output from map
-    my_map = None
-    _calculation_type = None
+    _calculation_source = None
+    _calculation = None
 
     def __init__(
         self,
@@ -224,11 +225,17 @@ class MyCalcSensorEntity(MySensorEntity):
     ) -> None:
         """Initialize MyCalcSensorEntity."""
         MySensorEntity.__init__(self, config_entry, modbus_item, coordinator, idx)
-        if self._api_item.params is not None:
-            self._calculation_type = self._api_item.params.get("calculation_type", None)
 
-        if self._calculation_type == CALCTYPES.POWER:
-            self.my_map = config_entry.runtime_data.powermap
+        if self._api_item.params is not None:
+            self._calculation_source = self._api_item.params.get("calculation", None)
+
+        if self._calculation_source is not None:
+            try:
+                self._calculation = compile(
+                    self._calculation_source, "calulation", "eval"
+                )
+            except SyntaxError:
+                log.warning("Syntax error %s", self._calculation_source)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -237,64 +244,61 @@ class MyCalcSensorEntity(MySensorEntity):
         self.async_write_ha_state()
 
     def translate_val(self, val):
-        if val is None:
-            return None
-        match self._calculation_type:
-            case CALCTYPES.POWER:
-                return self.power_val(val)
-            case CALCTYPES.QUOTIENT:
-                return self.quotient_val(val)
-            case CALCTYPES.DIFFERENCE:
-                return self.diff_val(val)
-
-    def power_val(self, val):
         """Translate a value from the modbus."""
-        val_0 = val / self._divider
-        val_x = self._config_entry.runtime_data.coordinator.get_value_from_item(
-            self._api_item.params.get("x", 1)
-        )
-        if val_x is None:
+        if self._calculation_source is None:
             return None
-        val_y = self._config_entry.runtime_data.coordinator.get_value_from_item(
-            self._api_item.params.get("y", 1)
-        )
-        if val_y is None:
+        if self._api_item.params is None:
             return None
-        return round(
-            (val_0 / 100) * self.my_map.map(val_x, val_y),
-            self._attr_suggested_display_precision,
-        )
+        if "val_1" in self._calculation_source:
+            val_1 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_1", 1)
+            )
+        if "val_2" in self._calculation_source:
+            val_2 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_2", 1)
+            )
+        if "val_3" in self._calculation_source:
+            val_3 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_3", 1)
+            )
+        if "val_4" in self._calculation_source:
+            val_4 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_4", 1)
+            )
+        if "val_5" in self._calculation_source:
+            val_5 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_5", 1)
+            )
+        if "val_6" in self._calculation_source:
+            val_6 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_6", 1)
+            )
+        if "val_7" in self._calculation_source:
+            val_7 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_7", 1)
+            )
+        if "val_8" in self._calculation_source:
+            val_8 = self._config_entry.runtime_data.coordinator.get_value_from_item(  # noqa F841 pylint: disable=W0612
+                self._api_item.params.get("val_8", 1)
+            )
+        if "power" in self._calculation_source:
+            power = self._config_entry.runtime_data.powermap  # noqa F841 pylint: disable=W0612
 
-    def quotient_val(self, val):
-        """Translate a value from the modbus."""
-        val_0 = val / self._divider
-        val_x = self._config_entry.runtime_data.coordinator.get_value_from_item(
-            self._api_item.params["denominator"]
-        )
-        if val_x is None:
+        try:
+            val_0 = val / self._divider  # noqa F841 pylint: disable=W0612
+            y = eval(self._calculation)  # pylint: disable=W0123
+        except ZeroDivisionError:
             return None
-        if val_0 is None:
+        except NameError:
+            log.warning("Variable not defined %s", self._calculation_source)
             return None
-        if val_x == 0:
+        except TypeError:
+            log.warning("No valid calulation string")
             return None
-        return round(val_0 / val_x, self._attr_suggested_display_precision)
-
-    def diff_val(self, val):
-        """Translate a value from the modbus."""
-        val_0 = val / self._divider
-        val_x = self._config_entry.runtime_data.coordinator.get_value_from_item(
-            self._api_item.params["diff_val"]
-        )
-        if val_x is None:
-            return None
-        if val_0 is None:
-            return None
-        return round(
-            val_0 - val_x / self._divider, self._attr_suggested_display_precision
-        )
+        return round(y, self._attr_suggested_display_precision)
 
 
-class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
+class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):  # pylint: disable=W0223
     """Represent a Number Entity.
 
     Class that represents a sensor entity derived from Sensorentity
@@ -331,7 +335,7 @@ class MyNumberEntity(CoordinatorEntity, NumberEntity, MyEntity):
         return MyEntity.my_device_info(self)
 
 
-class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):
+class MySelectEntity(CoordinatorEntity, SelectEntity, MyEntity):  # pylint: disable=W0223
     """Class that represents a sensor entity.
 
     Class that represents a sensor entity derived from Sensorentity
@@ -433,7 +437,7 @@ class MyWebifSensorEntity(CoordinatorEntity, SensorEntity, MyEntity):
                 "Update of %s failed. None response from server", self._api_item.name
             )
 
-    async def async_turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs):  # pylint: disable=W0613
         """Turn the light on.
 
         Example method how to request data updates.

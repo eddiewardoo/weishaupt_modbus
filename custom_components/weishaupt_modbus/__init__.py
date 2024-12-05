@@ -2,7 +2,7 @@
 
 import json
 import logging
-from pathlib import Path
+# from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -51,7 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: MyConfigEntry) -> bool:
     mbapi = ModbusAPI(config_entry=entry)
 
     if entry.data[CONF.CB_WEBIF]:
-        print
+        # print
         webapi = WebifConnection(config_entry=entry)
         await webapi.login()
     else:
@@ -158,6 +158,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: MyConfigEntry):
         new_data[CONF.CB_WEBIF] = False
         new_data[CONF.USERNAME] = ""
         new_data[CONF.PASSWORD] = ""
+        new_data[CONF.WEBIF_TOKEN] = ""
         hass.config_entries.async_update_entry(
             config_entry, data=new_data, minor_version=1, version=5
         )
@@ -242,7 +243,8 @@ def create_string_json() -> None:
     #    ...
 
     # load strings.json into string
-    with Path.open(
+    # replaced Path.open by open
+    with open(
         file="config/custom_components/weishaupt_modbus/strings.json",
         encoding="utf-8",
     ) as file:
@@ -252,7 +254,8 @@ def create_string_json() -> None:
     # overwrite entiy dict
     data_dict["entity"] = myEntity
     # write whole json to file again
-    with Path.open(
+    # replaced Path.open by open
+    with open(
         file="config/custom_components/weishaupt_modbus/strings.json",
         mode="w",
         encoding="utf-8",

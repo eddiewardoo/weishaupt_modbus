@@ -69,8 +69,8 @@ async def async_setup_entry(
                     idx=1,
                 )
             )
+        entries = entries + webifentries
 
-    #    entries = entries + webifentries
     async_add_entities(
         entries,
         update_before_add=True,

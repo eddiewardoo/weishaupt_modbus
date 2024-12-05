@@ -11,7 +11,7 @@ from homeassistant.const import (
     PERCENTAGE,
 )
 
-from .const import DEVICES, FORMATS, TYPES, CALCTYPES
+from .const import DEVICES, FORMATS, TYPES
 from .items import ModbusItem, StatusItem, WebItem
 
 reverse_device_list: dict[str, str] = {
@@ -711,7 +711,7 @@ PARAMS_ROOMTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_ROOMTEMP_LOW: dict = {
@@ -724,7 +724,7 @@ PARAMS_ROOMTEMP_LOW: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-low",
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_ROOMTEMP_MID: dict = {
@@ -737,7 +737,7 @@ PARAMS_ROOMTEMP_MID: dict = {
     "dynamic_max": "raum_soll_temp_komf",
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_ROOMTEMP_HIGH: dict = {
@@ -750,7 +750,7 @@ PARAMS_ROOMTEMP_HIGH: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-high",
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_WATERTEMP: dict = {
@@ -762,7 +762,7 @@ PARAMS_WATERTEMP: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-water",
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_WATERTEMP_LOW: dict = {
@@ -775,7 +775,7 @@ PARAMS_WATERTEMP_LOW: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-water",
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_WATERTEMP_HIGH: dict = {
@@ -788,7 +788,7 @@ PARAMS_WATERTEMP_HIGH: dict = {
     "precision": 1,
     "icon": "mdi:thermometer-water",
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 
@@ -800,7 +800,7 @@ PARAMS_SGREADYTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_BIVALENZTEMP: dict = {
@@ -811,7 +811,7 @@ PARAMS_BIVALENZTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_STDTEMP: dict = {
@@ -822,7 +822,7 @@ PARAMS_STDTEMP: dict = {
     "deviceclass": SensorDeviceClass.TEMPERATURE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 
@@ -833,7 +833,7 @@ PARAMS_HZKENNLINIE: dict = {
     "divider": 100,
     "precision": 2,
     "icon": "mdi:chart-line",
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_FLOWRATE: dict = {
@@ -843,7 +843,7 @@ PARAMS_FLOWRATE: dict = {
     "divider": 100,
     "precision": 2,
     "unit": UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
 }
 
 PARAMS_ENERGY: dict = {
@@ -852,72 +852,70 @@ PARAMS_ENERGY: dict = {
     "deviceclass": SensorDeviceClass.ENERGY,
     "precision": 0,
     "unit": UnitOfEnergy.KILO_WATT_HOUR,
-    "stateclass": SensorStateClass.TOTAL_INCREASING,   
+    "stateclass": SensorStateClass.TOTAL_INCREASING,
 }
 
 PARAMS_CALCPOWER: dict = {
     "min": 0,
     "max": 50000,
-    "x": "luftansautgemp",  # 30002,
-    "y": "vl_temp",  # 33104,
-    "x2": "aussentemp",  # 30001,
+    "val_1": "luftansautgemp",  # 30002,
+    "val_2": "vl_temp",  # 33104,
+    "val_3": "aussentemp",  # 30001,
     "deviceclass": SensorDeviceClass.POWER,
-    "calculation_type": CALCTYPES.POWER,
     "precision": 0,
     "unit": UnitOfPower.WATT,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
+    "calculation": "(val_0 / 100) * power.map(val_1, val_2)",
 }
 
 PARAMS_CALCSPREIZUNG: dict = {
     "min": 0,
     "max": 50,
     "divider": 10,
-    "diff_val": "rl_temp",  # 30001,
+    "val_1": "rl_temp",  # 30001,
     "deviceclass": SensorDeviceClass.TEMPERATURE,
-    "calculation_type": CALCTYPES.DIFFERENCE,
     "precision": 1,
     "unit": UnitOfTemperature.CELSIUS,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
+    "calculation": "val_0 - val_1/10",
 }
 
 
 PARAMS_CALCTAZ: dict = {
     "min": 0,
     "max": 50,
-    "denominator": "el_energie_heute",
-    "calculation_type": CALCTYPES.QUOTIENT,
+    "val_1": "el_energie_heute",
     "precision": 2,
-    "stateclass": SensorStateClass.MEASUREMENT, 
+    "stateclass": SensorStateClass.MEASUREMENT,
     "icon": "mdi:sigma",
+    "calculation": "val_0 / val_1",
 }
 
 PARAMS_CALCTAZ2: dict = {
     "min": 0,
     "max": 50,
-    "denominator": "el_energie_gestern",
-    "calculation_type": CALCTYPES.QUOTIENT,
+    "val_1": "el_energie_gestern",
     "precision": 2,
-    "stateclass": SensorStateClass.MEASUREMENT,   
     "icon": "mdi:sigma",
+    "calculation": "val_0 / val_1",
 }
 
 PARAMS_CALCMAZ: dict = {
     "min": 0,
     "max": 50,
-    "denominator": "el_energie_monat",
-    "calculation_type": CALCTYPES.QUOTIENT,
+    "val_1": "el_energie_monat",
     "precision": 2,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
     "icon": "mdi:sigma",
+    "calculation": "val_0 / val_1",
 }
 
 PARAMS_CALCJAZ: dict = {
     "min": 0,
     "max": 50,
     "denominator": "el_energie_jahr",
-    "calculation_type": CALCTYPES.QUOTIENT,
     "precision": 2,
-    "stateclass": SensorStateClass.MEASUREMENT,   
+    "stateclass": SensorStateClass.MEASUREMENT,
     "icon": "mdi:sigma",
 }
 
@@ -979,7 +977,7 @@ MODBUS_HZ_ITEMS = [
     ModbusItem( address=31101, name="Raumsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.HZ, params=PARAMS_ROOMTEMP, translation_key="raum_soll_temp"),
     ModbusItem( address=31102, name="Raumtemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.HZ, params=PARAMS_ROOMTEMP, translation_key="raum_temp"),
     ModbusItem( address=31103, name="Raumfeuchte", mformat=FORMATS.PERCENTAGE, mtype=TYPES.SENSOR, device=DEVICES.HZ, params=PARAMS_PERCENTAGE, translation_key="raum_feuchte"),
-    ModbusItem( address=31104, name="Vorlaufsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.HZ, params=PARAMS_STDTEMP, translation_key="vl_temp"),
+    ModbusItem( address=31104, name="Vorlaufsolltemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.HZ, params=PARAMS_STDTEMP, translation_key="hz_vl_solltemp"),
     ModbusItem( address=31105, name="HZ_Vorlauftemperatur", mformat=FORMATS.TEMPERATUR, mtype=TYPES.SENSOR, device=DEVICES.HZ, params=PARAMS_STDTEMP, translation_key="hz_vl_temp"),
     ModbusItem( address=31106, name="Adr. 31106", mformat=FORMATS.UNKNOWN, mtype=TYPES.SENSOR, device=DEVICES.HZ, translation_key="adr31106"),
     ModbusItem( address=41101, name="HZ_Konfiguration", mformat=FORMATS.STATUS, mtype=TYPES.NUMBER_RO, device=DEVICES.HZ, resultlist=HZ_KONFIGURATION, translation_key="hz_konf"),

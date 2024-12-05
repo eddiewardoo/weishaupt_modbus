@@ -30,6 +30,7 @@ class ConfConstants:
     CB_WEBIF = "enable-webif"
     PASSWORD = CONF_PASSWORD
     USERNAME = CONF_USERNAME
+    WEBIF_TOKEN = "Web-IF-Token"
 
 
 CONF = ConfConstants()
@@ -120,15 +121,3 @@ class DeviceNameConstants:
 
 
 DEVICENAMES = DeviceNameConstants()
-
-
-@dataclass(frozen=True)
-class CalcConstants:
-    """Main constants."""
-
-    POWER = "power"
-    QUOTIENT = "quotient"
-    DIFFERENCE = "difference"
-
-
-CALCTYPES = CalcConstants()
