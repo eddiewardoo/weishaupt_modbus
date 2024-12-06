@@ -80,12 +80,11 @@ class MyEntity(Entity):
 
         self._modbus_api = modbus_api
 
-        # default state class to record all entities by default
-        self._attr_state_class = SensorStateClass.MEASUREMENT
-       
         if self._api_item.format == FORMATS.STATUS:
             self._divider = 1
         else:
+            # default state class to record all entities by default
+            self._attr_state_class = SensorStateClass.MEASUREMENT
             if self._api_item.params is not None:
                 self._attr_state_class = self._api_item.params.get(
                     "stateclass", SensorStateClass.MEASUREMENT
