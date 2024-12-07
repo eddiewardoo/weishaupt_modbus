@@ -36,7 +36,6 @@
     "dev_warmwasser" : {
       "name" : "Warmwater{postfix}"
     },
-    ,
     "dev_heizkreis" : {
       "name" : "Verwarmingscircuit{postfix}"
     },
