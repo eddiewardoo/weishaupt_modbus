@@ -1226,7 +1226,7 @@ for item in MODBUS_HZ_ITEMS:
     mbi = copy.deepcopy(x=item)
     mbi.address = item.address+100
     mbi.name = item.name + "2"
-    mbi.translation_key = item.translation_key + "2"
+    #mbi.translation_key = item.translation_key + "2"
     mbi.device = DEVICES.HZ2
     MODBUS_HZ2_ITEMS.append(mbi)  # noqa: PERF401
 
@@ -1236,7 +1236,7 @@ for item in MODBUS_HZ_ITEMS:
     mbi = copy.deepcopy(x=item)
     mbi.address = item.address+200
     mbi.name = item.name + "3"
-    mbi.translation_key = item.translation_key + "3"
+    #mbi.translation_key = item.translation_key + "3"
     mbi.device = DEVICES.HZ3
     MODBUS_HZ3_ITEMS.append(mbi)  # noqa: PERF401
 
@@ -1246,7 +1246,7 @@ for item in MODBUS_HZ_ITEMS:
     mbi = copy.deepcopy(x=item)
     mbi.address = item.address+300
     mbi.name = item.name + "4"
-    mbi.translation_key = item.translation_key + "4"
+    #mbi.translation_key = item.translation_key + "4"
     mbi.device = DEVICES.HZ4
     MODBUS_HZ4_ITEMS.append(mbi)  # noqa: PERF401
 
@@ -1256,7 +1256,7 @@ for item in MODBUS_HZ_ITEMS:
     mbi: ModbusItem = copy.deepcopy(x=item)
     mbi.address = item.address+400
     mbi.name = item.name + "5"
-    mbi.translation_key = item.translation_key + "5"
+    #mbi.translation_key = item.translation_key + "5"
     mbi.device = DEVICES.HZ5
     MODBUS_HZ5_ITEMS.append(mbi)  # noqa: PERF401
 
