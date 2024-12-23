@@ -36,16 +36,16 @@
             "name": "WH Heating circuit{postfix}"
         },
         "dev_heizkreis2": {
-            "name": "WH Heating circuit2{postfix}"
+            "name": "WH Heating circuit 2{postfix}"
         },
         "dev_heizkreis3": {
-            "name": "WH Heating circuit3{postfix}"
+            "name": "WH Heating circuit 3{postfix}"
         },
         "dev_heizkreis4": {
-            "name": "WH Heating circuit4{postfix}"
+            "name": "WH Heating circuit 4{postfix}"
         },
         "dev_heizkreis5": {
-            "name": "WH Heating circuit5{postfix}"
+            "name": "WH Heating circuit 5{postfix}"
         },
         "dev_statistik": {
             "name": "WH Statistics{postfix}"
@@ -156,10 +156,10 @@
                 "name": "{prefix}Summer winter changeover5"
             },
             "ww_absenk": {
-                "name": "{prefix}Hot water lowering"
+                "name": "{prefix}Lowering"
             },
             "ww_normal": {
-                "name": "{prefix}Hot water normal"
+                "name": "{prefix}Normal"
             }
         },
         "select": {
@@ -484,9 +484,9 @@
                 }
             },
             "sys_operationmode": {
-                "name": "{prefix}System operation mode",
+                "name": "{prefix}Operation Mode",
                 "state": {
-                    "sys_operationmode_2ndheatsource": "2nd heat source",
+                    "sys_operationmode_2ndheatsource": "2nd Heat Source",
                     "sys_operationmode_automatic": "Automatic",
                     "sys_operationmode_heating": "Heating",
                     "sys_operationmode_cooling": "Cooling",
@@ -495,7 +495,7 @@
                 }
             },
             "ww_push": {
-                "name": "{prefix}Hot water Push",
+                "name": "{prefix}Push",
                 "state": {
                     "ww_push_10": "10 min",
                     "ww_push_100": "100 min",
@@ -726,7 +726,7 @@
                 "name": "{prefix}Electr. energy month"
             },
             "fehler": {
-                "name": "{prefix}Fehler",
+                "name": "{prefix}Error",
                 "state": {
                     "sys_fehler_1": "Refrigerant sensor expansion valve inlet (T1)",
                     "sys_fehler_10": "High pressure sensor (P2)",
@@ -938,7 +938,7 @@
                 "name": "{prefix}Heating constant temp. lowering5"
             },
             "hz_konf": {
-                "name": "{prefix}Heating circuit configuration",
+                "name": "{prefix}Configuration",
                 "state": {
                     "hp_konf_aus": "off",
                     "hp_konf_mischkreis": "Mixing circuit",
@@ -947,7 +947,7 @@
                 }
             },
             "hz_konf2": {
-                "name": "{prefix}Heating circuit configuration 2",
+                "name": "{prefix}Configuration 2",
                 "state": {
                     "hp_konf_aus": "off",
                     "hp_konf_mischkreis": "Mixing circuit",
@@ -956,7 +956,7 @@
                 }
             },
             "hz_konf3": {
-                "name": "{prefix}Heating circuit configuration 3",
+                "name": "{prefix}Configuration 3",
                 "state": {
                     "hp_konf_aus": "off",
                     "hp_konf_mischkreis": "Mixing circuit",
@@ -965,7 +965,7 @@
                 }
             },
             "hz_konf4": {
-                "name": "{prefix}Heating circuit configuration 4",
+                "name": "{prefix}Configuration 4",
                 "state": {
                     "hp_konf_aus": "off",
                     "hp_konf_mischkreis": "Mixing circuit",
@@ -974,7 +974,7 @@
                 }
             },
             "hz_konf5": {
-                "name": "{prefix}Heating circuit configuration 5",
+                "name": "{prefix}Configuration 5",
                 "state": {
                     "hp_konf_aus": "off",
                     "hp_konf_mischkreis": "Mixing circuit",
@@ -983,34 +983,34 @@
                 }
             },
             "hz_vl_temp": {
-                "name": "{prefix}Heat circuit feed temperature"
+                "name": "{prefix}Feed Temperature"
             },
             "hz_vl_temp2": {
-                "name": "{prefix}Heat circuit feed temperature 2"
+                "name": "{prefix}Feed temperature 2"
             },
             "hz_vl_temp3": {
-                "name": "{prefix}Heat circuit feed temperature 3"
+                "name": "{prefix}Feed temperature 3"
             },
             "hz_vl_temp4": {
-                "name": "{prefix}Heat circuit feed temperature 4"
+                "name": "{prefix}Feed temperature 4"
             },
             "hz_vl_temp5": {
-                "name": "{prefix}Heat circuit feed temperature 5"
+                "name": "{prefix}Feed temperature 5"
             },
             "hz_vl_solltemp": {
-                "name": "{prefix}Heat circuit feed setpoint temperature"
+                "name": "{prefix}Setpoint temperature"
             },
             "hz_vl_solltemp2": {
-                "name": "{prefix}Heat circuit feed setpoint temperature2"
+                "name": "{prefix}Feed setpoint temperature2"
             },
             "hz_vl_solltemp3": {
-                "name": "{prefix}Heat circuit feed setpoint temperature3"
+                "name": "{prefix}Feed setpoint temperature3"
             },
             "hz_vl_solltemp4": {
-                "name": "{prefix}Heat circuit feed setpoint temperature4"
+                "name": "{prefix}Feed setpoint temperature4"
             },
             "hz_vl_solltemp5": {
-                "name": "{prefix}Heat circuit feed setpoint temperature5"
+                "name": "{prefix}Feed setpoint temperature5"
             },
             "konf_ausg_h12": {
                 "name": "{prefix}Conf. Output H1.2",
@@ -1581,7 +1581,7 @@
                 "name": "{prefix}Hot water energy month"
             },
             "ww_konf": {
-                "name": "{prefix}HW_Configuration",
+                "name": "{prefix}Configuration",
                 "state": {
                     "ww_konf_aus": "off",
                     "ww_konf_pumpe": "Pump",
@@ -1589,10 +1589,10 @@
                 }
             },
             "ww_soll_temp": {
-                "name": "{prefix}Hot water setpoint temperature"
+                "name": "{prefix}Setpoint temperature"
             },
             "ww_temp": {
-                "name": "{prefix}Hot water temperature"
+                "name": "{prefix}Temperature"
             }
         }
     },
